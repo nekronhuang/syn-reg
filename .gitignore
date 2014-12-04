@@ -39,7 +39,8 @@ node_modules
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -73,3 +74,17 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+
+# bower
+/bower_components
+
+# local
+/AppData
+*.png
+
+# node-webkit
+/locales
+*.exe
+*.dll
+icudtl.dat
+nw.pak

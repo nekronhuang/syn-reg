@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html ng-app="syn-reg">
+<head>
+  <title>Synorme Device Control Panel</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="../bower_components/angular-material/angular-material.css" />
+  <link rel="stylesheet" href="../bower_components/angular-material/themes/cyan-theme.css" />
+  <link rel="stylesheet" href="../bower_components/icomoon/dist/css/style.css" />
+  <link rel="stylesheet" href="skins/css/theme.css" />
+  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="../bower_components/angular/angular.js"></script>
+  <script src="../bower_components/angular-animate/angular-animate.js"></script>
+  <script src="../bower_components/angular-aria/angular-aria.js"></script>
+  <script src="../bower_components/hammerjs/hammer.js"></script>
+  <script src="../bower_components/angular-material/angular-material.js"></script>
+  <script src="../bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
+  <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+</head>
+<body>
+  <div id="loading-wrap" class="hide">
+    <div class="content">
+      <div class="outer-circle"></div>
+      <div class="inner-circle"></div>
+      <div class="brand">
+        <img src="skins/images/brand.png">
+      </div>
+    </div>
+  </div>
+  <div id="wrapper" ng-cloak>
+    <header class="navbar navbar-default" ng-controller="headerCtrl">
+      <div class="container-fluid">
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav pull-right">
+            <li ng-init="aa=1234">
+              <a href="#"> <i class="icon icon-arrow-down-right-2"></i>
+              </a>
+            </li>
+            <li ng-click="minimize()">
+              <a href="#"> <i class="icon icon-minus"></i>
+              </a>
+            </li>
+            <li ng-click="toggleMaximize()">
+              <a href="#">
+                <i class="icon icon-expand-2"></i>
+              </a>
+            </li>
+            <li ng-click="close()">
+              <a href="#">
+                <i class="icon icon-close"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <section id="main" ng-controller="mainCtrl">
+      <div id="side">
+        <div class="brand-wrap">
+          <div class="brand">
+            <img src="skins/images/logo.png">
+          </div>
+        </div>
+        <ul>
+          <li ng-class="{active:$parent.activePanel=='wPanel'}" ng-click="$parent.activePanel='wPanel'">
+            <a href="#">写机器通讯</a>
+          </li>
+          <li ng-class="{active:$parent.activePanel=='rPanel'}" ng-click="$parent.activePanel='rPanel'">
+            <a href="#">读机器通讯</a>
+          </li>
+          <li ng-class="{active:$parent.activePanel=='sPanel'}" ng-click="$parent.activePanel='sPanel'">
+            <a href="#">设置</a>
+          </li>
+          <li id="cPanel" ng-controller="cPanelCtrl">
+            <a href="#">
+              <i class="icon-copy-2"></i> 消息记录
+            </a>
+            <ul ng-nicescroll="{cursorcolor:'#aaa',cursorborder:'1px solid #1a1c20'}">
+              <li ng-repeat="item in info">
+                {{item.date|date:'yyyy-M-dd H:mm'}}
+                <br> {{item.msg}}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div id="center">
+        <div class="control-panel" id="wPanel" ng-show="$parent.activePanel=='wPanel'" ng-controller="wPanelCtrl">
+          <div class="content">
+            <div class="form-inline">
+              <div class="form-group">
+                <input type="text" class="form-control" ng-model="searchInput">
+              </div>
+              <button type="submit" class="btn btn-primary" ng-click="addOne()">索引</button>
+              <button type="submit" class="btn btn-primary">网络</button>
+              <button type="submit" class="btn btn-primary" title="只支持本地数据库" ng-click="fuzzySearch()">模糊</button>
+            </div>
+            <form class="form-horizontal" ng-nicescroll>
+              <div class="form-group">
+                <h2><small>基础信息：</small></h2>
+                <div class="col-sm-3" ng-repeat="item in input" ng-if="item.visible" style="margin-bottom:15px;">
+                  <div class="row">
+                    <label class="col-sm-3 control-label">{{item.display}}</label>
+                    <div class="col-sm-8" ng-switch on="item.search">
+                      <input class="form-control" ng-model="item.value" ng-switch-when="all" typeahead="c as c.name for c in getNameSearch($viewValue)" typeahead-on-select='onSelectPart($item, $model, $label)' typeahead-template-url="nameSearch.html" typeahead-wait-ms="10">
+                      <input class="form-control" ng-model="item.value" ng-switch-when="one" typeahead="c as c.company for c in companySearch($viewValue) | filter:$viewValue | limitTo:10">
+                      <input class="form-control" ng-model="item.value" ng-disabled="item.disabled" ng-switch-default>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <h2><small>登记情况：</small></h2>
+                <div class="col-sm-3" ng-repeat="item in extraInput" style="margin-bottom:15px;">
+                  <div class="row">
+                    <label class="col-sm-3 control-label">{{item.display}}</label>
+                    <div class="col-sm-8" ng-switch on="item.type">
+                      <div class="checkbox" ng-switch-when="checkbox">
+                        <input type="checkbox" ng-model="item.value">
+                      </div>
+                      <select class="form-control" ng-switch-when="select" ng-model="item.value" ng-options="i as option for (i,option) in item.options">
+                      </select>
+                      <input class="form-control" ng-model="item.value" ng-switch-when="text" disabled ng-value="item.value">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <h2><small>问卷调查：</small></h2>
+                <div class="col-sm-3" ng-repeat="item in questions track by $index" style="margin-bottom:15px;">
+                  <div class="row">
+                    <label class="col-sm-3 control-label">问题{{$index+1}}</label>
+                    <div class="col-sm-8">
+                      <input class="form-control" ng-model="questions[$index]">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <h2><small>打印设置：</small></h2>
+                <label class="col-sm-2 control-label">胸牌类型：</label>
+                <div class="col-sm-8">
+                  <label class="radio-inline" ng-repeat="item in type.kind">
+                    <input type="radio" ng-model="type.value" ng-value="item.value"> {{item.display}}
+                  </label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <footer layout>
+            <section class="funcbar" layout="vertical" layout-sm="horizontal" layout-align="center center">
+              <md-button class="md-raised" ng-click="spWrite()">制卡</md-button>
+              <md-button class="md-raised" ng-click="spRead()">读取</md-button>
+            </section>
+            <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
+              <md-button class="md-fab" ng-click="importList()" aria-label="importList" tooltip="导入名单">
+                <i class="icon icon-folder-open"></i>
+              </md-button>
+              <md-button class="md-fab" ng-click="exportList()" aria-label="exportList" tooltip="导出名单">
+                <i class="icon icon-profile"></i>
+              </md-button>
+              <md-button class="md-fab" ng-click="startWorldCard()" aria-label="startWorldCard" tooltip="启动名片识别">
+                <i class="icon icon-newspaper"></i>
+              </md-button>
+              <md-button class="md-fab" aria-label="settings" tooltip="设置输入项">
+                <i class="icon icon-cog"></i>
+              </md-button>
+              <md-button class="md-fab" ng-click="clearAll()" aria-label="clearAll" tooltip="清空输入项">
+                <i class="icon icon-spinner-6"></i>
+              </md-button>
+            </section>
+          </footer>
+        </div>
+        <div class="control-panel" id="rPanel" ng-show="$parent.activePanel=='rPanel'" ng-controller="rPanelCtrl">
+          <div class="content">
+            <div class="form-inline">
+              <div class="form-group">
+                <input type="text" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-primary">搜索</button>
+            </div>
+            <form class="form-horizontal" ng-nicescroll>
+              <div class="form-group" ng-repeat="item in input" ng-if="item.visible">
+                <label class="col-sm-3 control-label">{{item.display}}</label>
+                <div class="col-sm-6">
+                  <input class="form-control" ng-model="item.value">
+                </div>
+              </div>
+            </form>
+          </div>
+          <footer layout>
+            <section class="funcbar" layout="vertical" layout-sm="horizontal" layout-align="center center">
+              <md-button class="md-raised" ng-click="spImport()">导入</md-button>
+              <md-button class="md-raised" ng-click="spExport()">导出</md-button>
+            </section>
+            <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
+              <md-button class="md-fab" ng-click="loadList()" aria-label="loadList" tooltip="导入名单">
+                <i class="icon icon-profile"></i>
+              </md-button>
+              <md-button class="md-fab" ng-click="clearAll()" aria-label="clearAll" tooltip="清空输入项">
+                <i class="icon icon-spinner-6"></i>
+              </md-button>
+            </section>
+          </footer>
+        </div>
+        <div class="control-panel" id="sPanel" ng-show="$parent.activePanel=='sPanel'" ng-controller="sPanelCtrl">
+          <div class="content">
+            <div class="tab-container" ng-init="active=0">
+              <ul class="nav nav-tabs">
+                <li ng-class="{active:active==0}" ng-click="active=0">
+                  <a href="#">连接设置</a>
+                </li>
+                <li ng-class="{active:active==1}" ng-click="active=1">
+                  <a href="#">展会设置</a>
+                </li>
+                <li ng-class="{active:active==2}" ng-click="active=2">
+                  <a href="#">初始化设置</a>
+                </li>
+                <li ng-class="{active:active==3}" ng-click="active=3">
+                  <a href="#">高级</a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div class="tab-pane" ng-class="{active:active==0}">
+                  <div id="connect-settings" ng-controller="connectSettingsCtrl" class="form-horizontal" ng-include src="'views/connectSettings.html'">
+                  </div>
+                </div>
+                <div class="tab-pane" ng-class="{active:active==1}">
+                  <div id="expo-settings" ng-controller="expoSettingsCtrl" class="form-horizontal" ng-include src="'views/expoSettings.html'"></div>
+                </div>
+                <div class="tab-pane" ng-class="{active:active==2}">
+                  <div id="index-settings" ng-controller="indexSettingsCtrl" class="form-horizontal" ng-include src="'views/indexSettings.html'">
+                  </div>
+                </div>
+                <div class="tab-pane" ng-class="{active:active==3}">
+                  <div id="extra-settings" ng-controller="extraSettingsCtrl" class="form-horizontal" ng-include src="'views/extraSettings.html'">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script type="text/javascript" src="scripts/main.js" charset="utf-8"></script>
+  <!--controllers-->
+  <script type="text/javascript" src="scripts/controllers/wPanel.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/controllers/rPanel.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/controllers/sPanel.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/controllers/cPanel.js" charset="utf-8"></script>
+  <!--services-->
+  <script type="text/javascript" src="scripts/services/write.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/read.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/format.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/import.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/export.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/basic.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/advanced.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/tools.js" charset="utf-8"></script>
+  <!--directives-->
+  <script type="text/javascript" src="scripts/directives/directives.js" charset="utf-8"></script>
+</body>
+</html>

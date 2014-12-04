@@ -1,0 +1,11 @@
+<div class="form-group">
+  <button class="btn btn-success" ng-click="save()"> <i class="icon-disk"></i>&nbsp;保存</button>
+</div>
+<div class="scroll">
+  <div class="form-group dash" ng-repeat="item in expoSettings">
+    <label class="col-sm-3 control-label">{{item.display}}</label>
+    <div class="col-sm-6">
+      <input class="form-control" ng-model="item.value">
+    </div>
+  </div>
+</div>

@@ -1,0 +1,512 @@
+html {
+    min-height: 100%;
+}
+body {
+    font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', '黑体', 'Segoe UI', Tahoma, Helvetica, Sans-Serif;
+    -webkit-user-select: none;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+.tooltip, .popover {
+    font-family: inherit;
+}
+.clearfix {
+    clear: both;
+}
+/*global*/
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+i.icon {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+a:hover {
+    text-decoration: none;
+}
+.form-control {
+    padding: 6px 8px;
+    font-size: 12px;
+    border-radius: 1px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+}
+.form-control:focus {
+    border-color: #2598f9;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+}
+.btn {
+    border-color: #CCCCCC;
+    border-radius: 0;
+    outline: none;
+    /*    margin-bottom: 5px !important;*/
+    margin-left: 4px;
+    font-size: 13px;
+    padding: 7px 11px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.12), 1px 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+.btn-default, .btn-default:focus {
+    background-color: #FFFFFF;
+    border-color: #CCCCCC;
+    color: #333333;
+    background-image: linear-gradient(to bottom, #ffffff 60%, #f9f9f9 100%);
+}
+.btn-default i {
+    color: #444;
+}
+.btn-primary, .btn-primary:focus {
+    background-color: #4D90FD;
+    border-color: #3680BF;
+}
+.btn-primary:hover, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
+    background-color: #4e9dff;
+    border-color: #357ebd;
+}
+.btn-primary:active {
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.125) inset;
+}
+.btn-success, .btn-success:focus {
+    background-color: #60C060;
+    border-color: #54A754;
+}
+.btn-success:hover, .btn-success:active, .btn-success.active, .open .dropdown-toggle.btn-success {
+    background-color: #65ca65;
+    border-color: #54A754;
+}
+.btn-info, .btn-info:focus {
+    background-color: #5BC0DE;
+    border-color: #28a1c4;
+}
+.btn-info:hover, .btn-info:active, .btn-info.active, .open .dropdown-toggle.btn-info {
+    background-color: #5fc8e7;
+    border-color: #28A1C4;
+}
+.btn-warning, .btn-warning:focus {
+    background-color: #FF9900;
+    border-color: #E38800;
+}
+.btn-warning:hover, .btn-warning:active, .btn-warning.active, .open .dropdown-toggle.btn-warning {
+    background-color: #ffa800;
+}
+.btn-danger, .btn-danger:focus {
+    background-color: #DF4B33;
+    border-color: #CA452E;
+}
+.btn-danger:hover, .btn-danger:active, .btn-danger.active, .open .dropdown-toggle.btn-danger {
+    background-color: #e64d35;
+}
+.btn:focus {
+    outline: none;
+}
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    border: 1px solid #fff;
+    background: rgb(66, 66, 66);
+    background-clip: padding-box;
+}
+/*loading*/
+#loading-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    z-index: 100;
+}
+#loading-wrap .content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -190px;
+    margin-top: -240px;
+    padding-top: 50px;
+}
+#loading-wrap .content .brand {
+    width: 340px;
+    height: 340px;
+    background: #fff;
+    margin: 0 auto;
+    position: relative;
+    top: -720px;
+    border-radius: 50%;
+    padding: 30px;
+}
+#loading-wrap .content .brand img {
+    display: block;
+    width: 280px;
+}
+#loading-wrap .content .outer-circle {
+    background-color: rgba(0, 0, 0, 0);
+    border: 5px solid rgba(0, 183, 229, 0.9);
+    opacity: .9;
+    border-right: 5px solid rgba(0, 0, 0, 0);
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    border-radius: 50%;
+    box-shadow: 0 0 35px #2187e7;
+    width: 380px;
+    height: 380px;
+    margin: 0 auto;
+    -webkit-animation: spinPulse 1s infinite linear;
+}
+#loading-wrap .content .inner-circle {
+    background-color: rgba(0, 0, 0, 0);
+    border: 5px solid rgba(0, 183, 229, 0.9);
+    opacity: .9;
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    border-right: 5px solid rgba(0, 0, 0, 0);
+    border-radius: 50%;
+    box-shadow: 0 0 15px #2187e7;
+    width: 360px;
+    height: 360px;
+    margin: 0 auto;
+    position: relative;
+    top: -370px;
+    -webkit-animation: spinoffPulse 1s infinite linear;
+}
+#loading-wrap.loaded {
+    -webkit-animation: wraploaded 1s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+#loading-wrap.loaded .content {
+    -webkit-animation: contentloaded 0.5s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+@-webkit-keyframes spinPulse {
+    0% {
+        -webkit-transform: rotate(160deg);
+        opacity: 0;
+        box-shadow: 0 0 1px #2187e7;
+    }
+    50% {
+        -webkit-transform: rotate(145deg);
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: rotate(-320deg);
+        opacity: 0;
+    }
+}
+@-webkit-keyframes spinoffPulse {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes wraploaded {
+    to {
+        -webkit-transform: translate3d(0, -100%, 0);
+    }
+}
+@-webkit-keyframes contentloaded {
+    to {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -20%, 0) scale3d(0.3, 0.3, 1);
+    }
+}
+#wrapper {
+    width: 100%;
+    height: 100%;
+}
+md-toast.md-top {
+    top: 55px;
+}
+/*header*/
+header.navbar {
+    min-height: 40px;
+    border-radius: 0;
+    z-index: 80;
+}
+header.navbar .navbar-brand {
+    padding: 10px 15px;
+    height: 40px;
+}
+header.navbar .navbar-nav li a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+/*side*/
+#side {
+    background: #272930;
+    width: 200px;
+    display: table-cell;
+    vertical-align: top;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: 81;
+}
+#side .brand-wrap {
+    height: 110px;
+    padding: 20px;
+}
+#side .brand {
+    margin: 0 auto;
+    width: 70px;
+    height: 70px;
+    background: #fff;
+    border-radius: 50px;
+}
+#side .brand img {
+    display: inline-block;
+    margin: 25px 9px;
+}
+#side ul {
+    margin: 0 0 0 0;
+    padding: 0;
+    border-top: 1px solid #1a1c20;
+    border-bottom: 1px solid #2f323a;
+}
+#side ul li a {
+    border-top: 1px solid #32353e;
+    border-bottom: 1px solid #1a1c20;
+    display: block;
+    padding: 14px 18px 13px 12px;
+    color: #c9d4f6;
+    text-align: center;
+    font-weight: 300;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+#side ul li.active a {
+    background: #2A2C34;
+    border-left: 2px solid #2494F2;
+}
+#side #cPanel {
+    position: absolute;
+    bottom: 0;
+    height: 200px;
+    left: 0;
+    right: 0;
+    background: #1F2126;
+    border-top: 1px solid #131519;
+    box-shadow: 0 1px 0 #2A2C31 inset;
+}
+#side #cPanel ul {
+    height: 150px;
+    margin: 0;
+    padding: 0;
+    padding-top: 4px;
+    list-style: none;
+    overflow-y: auto;
+}
+#side #cPanel ul > li {
+    display: block;
+    font-size: 11px;
+    padding: 7px 18px 7px;
+    border-bottom: 1px solid #1a1c20;
+    color: #c9d4f6;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+/*center*/
+#main {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#main #center {
+    position: absolute;
+    vertical-align: top;
+    left: 200px;
+    right: 0px;
+    top: 40px;
+    bottom: 0px;
+}
+#center .control-panel {
+    padding: 20px;
+    height: 100%;
+    width: 100%;
+}
+#center #wPanel.control-panel .form-inline, #center #rPanel.control-panel .form-inline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px dashed #efefef;
+}
+#center #wPanel.control-panel .form-horizontal, #center #rPanel.control-panel .form-horizontal {
+    position: absolute;
+    top: 80px;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+}
+#center .control-panel .form-horizontal > .form-group {
+    margin: 0;
+    padding: 10px 20px;
+    border-bottom: 1px dashed #efefef;
+}
+#center .control-panel .form-horizontal > .form-group:last-child {
+    border-bottom: 0;
+    margin-bottom: 20px;
+}
+#center .control-panel .form-horizontal > .form-group h2 {
+    margin-top: 0;
+}
+#main .control-panel footer {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0;
+    height: 50px;
+    background: #f7f7f7;
+    border-top: 1px solid #e7e7e7;
+}
+#main .control-panel footer .funcbar {
+    margin-left: 115px;
+}
+#main .control-panel footer .md-raised {
+    background-color: #fff;
+    color: #444;
+    width: 8em;
+    margin: 0px 15px;
+}
+#main .control-panel footer .md-raised:not([disabled]):hover, #main .control-panel footer .md-raised:not([disabled]).focus {
+    background-color: #fff;
+}
+#main .control-panel footer .toolbar {
+    -webkit-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    -webkit-justify-content: flex-end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+    margin-right: 75px;
+}
+#main .control-panel footer .md-fab {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    color: #444444;
+    margin: 0 15px;
+}
+#main .control-panel footer .md-fab button {
+    color: #444;
+}
+#main .control-panel footer .md-fab button .icon {
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 20px;
+}
+/*sPanel*/
+#sPanel .tab-container {
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+}
+#sPanel .nav-tabs {
+    border-bottom: 1px solid #ECECEC;
+}
+#sPanel .nav-tabs > li > a {
+    padding: 9px 15px;
+    font-size: 13px;
+    margin-right: 0;
+    min-width: 80px;
+    text-align: center;
+}
+#sPanel .nav-tabs > li > a:hover, #sPanel .nav-tabs > li > a:active {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #3398ff;
+    border-radius: 2px 2px 0 0;
+}
+#sPanel .nav-tabs > li.active > a, #sPanel .nav-tabs > li.active > a:hover, #sPanel .nav-tabs > li.active > a:focus {
+    border-top: 2px solid #43A0F2;
+    border-radius: 0;
+    border-bottom: 1px solid #fff;
+    padding-bottom: 10px;
+    padding-top: 8px;
+    color: #555;
+    box-shadow: 1px -3px 4px -3px rgba(0, 0, 0, 0.08);
+    border-left: 1px solid #ECECEC;
+    border-right: 1px solid #ECECEC;
+    position: static;
+}
+#sPanel .nav-tabs > li.active > a:after, #sPanel .nav-tabs > li.active > a:hover:after, #sPanel .nav-tabs > li.active > a:focus:after {
+    content: "";
+    display: block;
+    height: 2px;
+    background: #43A0F2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+#sPanel .tab-content {
+    padding: 20px;
+    border-bottom: 1px solid #E2E2E2;
+    border-left: 1px solid #ECECEC;
+    border-radius: 0 3px 3px;
+    border-right: 1px solid #ECECEC;
+    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.04);
+    height: 95%;
+}
+#sPanel .tab-content .form-horizontal, #sPanel .tab-content .tab-pane {
+    height: 100%;
+}
+#sPanel .tab-content .form-horizontal > .form-inline {
+    padding: 10px 20px;
+}
+#sPanel .tab-content .form-horizontal .scroll {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 90%;
+    width: 100%;
+}
+#sPanel .tab-content .form-horizontal .scroll > .form-group, #sPanel .tab-content .form-horizontal .scroll > .form-inline {
+    padding: 20px;
+}
+#sPanel .tab-content .form-horizontal .dash {
+    border-bottom: 1px dashed #efefef;
+}
+#sPanel #index-settings .form-inline .form-group {
+    margin-right: 15px;
+    padding: 0 10px;
+}
+#sPanel #index-settings .form-inline input[type="text"] {
+    width: 100px;
+}
+/*wpanel-Settings*/
+#wPanel-settings .input-sort {
+    border-right: 1px solid #dadada;
+    overflow-y: auto;
+}
+#wPanel-settings .input-sort ol {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    height: 400px;
+    padding-bottom: 20px;
+}
+#wPanel-settings .input-sort li {
+    padding: 5px 15px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    background: #fff;
+    border-color: #98cce6;
+    color: #3A87AD;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.11);
+    transition: background .4s;
+}
+#wPanel-settings .input-sort li.active {
+    background: #D9EDF7;
+}
