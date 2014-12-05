@@ -1,5 +1,18 @@
-angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', ['$scope', '$filter', '$q', 'Tools', 'Write', 'Read',
-    function($scope, $filter, $q, Tools, Write, Read) {
+angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', ['$document','$scope', '$filter', '$q', 'Tools', 'Write', 'Read',
+    function($document,$scope, $filter, $q, Tools, Write, Read) {
+        $document.keydown(function(evt){
+            switch (evt.originalEvent.keyIdentifier){
+                case 'F2':
+                    $scope.spWrite();
+                    break;
+                case 'F3':
+                    $scope.spRead();
+                    break;
+                case 'F4':
+                    $scope.clearAll();
+                    break;
+            }
+        });
         $scope.input = [{
             key: 'auth',
             display: 'auth',

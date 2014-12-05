@@ -10,6 +10,9 @@ angular.module('syn-reg', ['app.controllers', 'app.services','app.directives', '
                 position: 'top right'
             });
         }
+        $window.onbeforeunload=function(event){
+            if($rootScope.sPort) $rootScope.sPort.close(function(){});
+        }
         iconv.extendNodeEncodings();
         var myCache=$cacheFactory('myCache');
         myCache.put('wPanel',angular.element('#wPanel'));
