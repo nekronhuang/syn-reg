@@ -4,7 +4,6 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
     function($rootScope, $filter, $cacheFactory, Tools, Write, Read, Import, Export, Format, Advanced) {
         this.list = function(callback) {
             async.waterfall([
-
                 function(next) {
                     sp.list(next);
                 },
@@ -31,11 +30,11 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                     var results = [];
                     async.each(sPorts, function(item, cb) {
                         if (item.readable) {
-                            if (typeof(sPort.id) == 'string') {
+                            if (typeof($rootScope.sPort.id) == 'string') {
                                 results.push({
                                     display: '读机器',
                                     com: item.path,
-                                    readId: sPort.id
+                                    readId: $rootScope.sPort.id
                                 });
                             } else {
                                 results.push({
@@ -114,11 +113,10 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
         this.build = function(com, readId) {
             var myCache = $cacheFactory.get('myCache');
             async.series([
-
                 function(cb) {
                     if ($rootScope.sPort && $rootScope.sPort.path != com) {
                         $rootScope.sPort.close(function(err) {
-                            sPort = null;
+                            $rootScope.sPort = null;
                             cb(err);
                         });
                     } else {
@@ -163,9 +161,6 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                             case '2u':
                                 Read.u();
                                 break;
-                            case '3s':
-                                // NDEF.s();
-                                break;
                             case '4s':
                                 Import.s(buf);
                                 break;
@@ -177,9 +172,6 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                 break;
                             case '6s':
                                 Export.s(buf);
-                                break;
-                            case '8s':
-                                // NDEF.s();
                                 break;
                             case '9s':
                                 Advanced.s9();

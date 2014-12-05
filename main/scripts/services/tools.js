@@ -24,9 +24,6 @@ angular.module('service.tools', []).service('Tools', ['$rootScope', '$cacheFacto
         }
         this.indexInit = function() {
             if (!myCache.get('indexInit')) {
-                if (!localStorage.getItem('$index') || !localStorage.getItem('$infoSections')) {
-                    return $rootScope.showDialog('请先初始化功能！');
-                }
                 var initArray = [
                         [0x35]
                     ],

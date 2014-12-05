@@ -1,8 +1,8 @@
 var gui = require('nw.gui'),
     iconv=require('iconv-lite');
 
-angular.module('syn-reg', ['app.controllers', 'app.services','app.directives', 'ngMaterial', 'ui.bootstrap']).run(['$rootScope', '$timeout', '$cacheFactory','$mdToast',
-    function($rootScope, $timeout,$cacheFactory, $mdToast) {
+angular.module('syn-reg', ['app.controllers', 'app.services','app.directives', 'ngMaterial', 'ui.bootstrap']).run(['$window','$rootScope', '$timeout', '$cacheFactory','$mdToast',
+    function($window,$rootScope, $timeout,$cacheFactory, $mdToast) {
         $rootScope.showDialog = function(m) {
             $mdToast.show({
                 template: '<md-toast>' + m + '</md-toast>',
@@ -17,6 +17,7 @@ angular.module('syn-reg', ['app.controllers', 'app.services','app.directives', '
         myCache.put('sPanel',angular.element('#sPanel'));
         myCache.put('cPanel',angular.element('#cPanel'));
         $rootScope.sPort=null;
+        $rootScope.onFormat=false;
         $rootScope.activePanel='wPanel';
         var win = gui.Window.get();
         win.maximize();

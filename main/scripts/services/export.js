@@ -14,7 +14,7 @@ angular.module('service.export', ['service.tools']).service('Export', ['$rootSco
                 exportData += parseInt(cardid, 16).toString() + ',' + time + '\r\n';
             }
             setTimeout(function() {
-                Tools.communicateSP(sPort, new Buffer('6c'));
+                Tools.communicateSP($rootScope.sPort, new Buffer('6c'));
             }, 100);
             Tools.showLog('信息传输中,请勿断开!');
         }

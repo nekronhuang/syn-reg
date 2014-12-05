@@ -1,7 +1,7 @@
 angular.module('service.write', ['service.tools']).service('Write', [
-    '$rootScope','$cacheFactory', 'Tools',
-    function($rootScope,$cacheFactory,Tools) {
-        var myCache=$cacheFactory.get('myCache');
+    '$rootScope', '$cacheFactory', 'Tools',
+    function($rootScope, $cacheFactory, Tools) {
+        var myCache = $cacheFactory.get('myCache');
         this.g = function(input) {
             var content = new Buffer(JSON.stringify(input)),
                 sections = parseInt(localStorage.getItem('$infoSections')),
@@ -12,12 +12,15 @@ angular.module('service.write', ['service.tools']).service('Write', [
             Tools.communicateSP($rootScope.sPort, Buffer.concat(buf));
         }
         this.c = function() {
+            if (!localStorage.getItem('$index') || !localStorage.getItem('$infoSections')) {
+                return $rootScope.showDialog('请先初始化功能!');
+            }
             Tools.communicateSP($rootScope.sPort, Tools.indexInit());
         }
         this.s = function(data) {
             var str = data.substring(2, 16),
                 db_data = '"cardid":' + parseInt(str, 16).toString() + ',',
-                input=myCache.get('wPanel').scope().input;
+                input = myCache.get('wPanel').scope().input;
             for (var i = 0, len = input.length; i < len; i++) {
                 var now = input[i];
                 if (now.key == 'field' || now.key == 'number' || now.key == 'mobile') {

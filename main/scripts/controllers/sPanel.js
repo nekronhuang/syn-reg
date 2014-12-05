@@ -162,8 +162,8 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
             "keyB": "0000"
         }];
     }
-]).controller('extraSettingsCtrl', ['$scope', 'Advanced',
-    function($scope, Advanced) {
+]).controller('extraSettingsCtrl', ['$rootScope','$scope', 'Advanced',
+    function($rootScope,$scope, Advanced) {
         $scope.clear = function() {
             Advanced.g9();
         }
