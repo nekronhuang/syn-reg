@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="syn-reg">
+
 <head>
   <title>Synorme Device Control Panel</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -18,6 +19,7 @@
   <script src="../bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
   <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 </head>
+
 <body>
   <div id="loading-wrap" class="hide">
     <div class="content">
@@ -33,7 +35,7 @@
       <div class="container-fluid">
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav pull-right">
-            <li ng-init="aa=1234">
+            <li>
               <a href="#"> <i class="icon icon-arrow-down-right-2"></i>
               </a>
             </li>
@@ -163,7 +165,7 @@
               <md-button class="md-fab" ng-click="startWorldCard()" aria-label="startWorldCard" tooltip="启动名片识别">
                 <i class="icon icon-newspaper"></i>
               </md-button>
-              <md-button class="md-fab" aria-label="settings" tooltip="设置输入项">
+              <md-button class="md-fab" ng-click="modifySetting()" aria-label="settings" tooltip="设置输入项">
                 <i class="icon icon-cog"></i>
               </md-button>
               <md-button class="md-fab" ng-click="clearAll()" aria-label="clearAll" tooltip="清空输入项">
@@ -244,6 +246,22 @@
       </div>
     </section>
   </div>
+  <script type="text/ng-template" id="modifySetting.html">
+    <div class="modal-header">
+      <h3>输入项设置</h3>
+      <button class="close" ng-click="cancel()">×</button>
+    </div>
+    <div class="modal-body">
+      <md-checkbox ng-model="item.visible" ng-disabled="item.disabled" aria-label="modifySetting" ng-repeat="item in items">
+        {{ item.display }}
+      </md-checkbox>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" ng-click="cancel()">取消</button>
+      <button class="btn btn-success" ng-click="save()">确认</button>
+    </div>
+  </script>
+  <!--main-->
   <script type="text/javascript" src="scripts/main.js" charset="utf-8"></script>
   <!--controllers-->
   <script type="text/javascript" src="scripts/controllers/wPanel.js" charset="utf-8"></script>
@@ -262,4 +280,5 @@
   <!--directives-->
   <script type="text/javascript" src="scripts/directives/directives.js" charset="utf-8"></script>
 </body>
+
 </html>

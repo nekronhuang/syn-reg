@@ -1,7 +1,7 @@
-angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', ['$document','$scope', '$filter', '$q', 'Tools', 'Write', 'Read',
-    function($document,$scope, $filter, $q, Tools, Write, Read) {
-        $document.keydown(function(evt){
-            switch (evt.originalEvent.keyIdentifier){
+angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', ['$document', '$rootScope', '$scope', '$filter', '$q', '$modal', 'Tools', 'Write', 'Read',
+    function($document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read) {
+        $document.keydown(function(evt) {
+            switch (evt.originalEvent.keyIdentifier) {
                 case 'F2':
                     $scope.spWrite();
                     break;
@@ -13,90 +13,94 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     break;
             }
         });
-        $scope.input = [{
-            key: 'auth',
-            display: 'auth',
-            value: '',
-            visible: true,
-            disabled: true
-        }, {
-            key: 'name',
-            display: '姓名',
-            value: '',
-            visible: true,
-            search: 'all'
-        }, {
-            key: 'gender',
-            display: '性别',
-            value: '',
-            visible: true
-        }, {
-            key: 'continent',
-            display: '大洲',
-            value: '',
-            visible: true
-        }, {
-            key: 'country',
-            display: '国家',
-            value: '',
-            visible: true
-        }, {
-            key: 'province',
-            display: '省份',
-            value: '',
-            visible: true
-        }, {
-            key: 'field',
-            display: '行业',
-            value: '',
-            visible: true
-        }, {
-            key: 'company',
-            display: '公司',
-            value: '',
-            visible: true,
-            search: 'one'
-        }, {
-            key: 'department',
-            display: '部门',
-            value: '',
-            visible: true
-        }, {
-            key: 'position',
-            display: '职位',
-            value: '',
-            visible: true
-        }, {
-            key: 'address',
-            display: '地址',
-            value: '',
-            visible: true
-        }, {
-            key: 'website',
-            display: '网站',
-            value: '',
-            visible: true
-        }, {
-            key: 'email',
-            display: '邮箱',
-            value: '',
-            visible: true
-        }, {
-            key: 'mobile',
-            display: '手机',
-            value: '',
-            visible: true
-        }, {
-            key: 'number',
-            display: '座机',
-            value: '',
-            visible: true
-        }, {
-            key: 'qq',
-            display: 'QQ',
-            value: '',
-            visible: true
-        }, ];
+        if (localStorage.getItem('$input')) {
+            $scope.input = JSON.parse(localStorage.getItem('$input'));
+        } else {
+            $scope.input = [{
+                key: 'auth',
+                display: 'auth',
+                value: '',
+                visible: true,
+                disabled: true
+            }, {
+                key: 'name',
+                display: '姓名',
+                value: '',
+                visible: true,
+                search: 'all'
+            }, {
+                key: 'gender',
+                display: '性别',
+                value: '',
+                visible: true
+            }, {
+                key: 'continent',
+                display: '大洲',
+                value: '',
+                visible: true
+            }, {
+                key: 'country',
+                display: '国家',
+                value: '',
+                visible: true
+            }, {
+                key: 'province',
+                display: '省份',
+                value: '',
+                visible: true
+            }, {
+                key: 'field',
+                display: '行业',
+                value: '',
+                visible: true
+            }, {
+                key: 'company',
+                display: '公司',
+                value: '',
+                visible: true,
+                search: 'one'
+            }, {
+                key: 'department',
+                display: '部门',
+                value: '',
+                visible: true
+            }, {
+                key: 'position',
+                display: '职位',
+                value: '',
+                visible: true
+            }, {
+                key: 'address',
+                display: '地址',
+                value: '',
+                visible: true
+            }, {
+                key: 'website',
+                display: '网站',
+                value: '',
+                visible: true
+            }, {
+                key: 'email',
+                display: '邮箱',
+                value: '',
+                visible: true
+            }, {
+                key: 'mobile',
+                display: '手机',
+                value: '',
+                visible: true
+            }, {
+                key: 'number',
+                display: '座机',
+                value: '',
+                visible: true
+            }, {
+                key: 'qq',
+                display: 'QQ',
+                value: '',
+                visible: true
+            }, ];
+        }
         $scope.questions = new Array(7);
         $scope.type = {
             kind: [{
@@ -155,6 +159,28 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         $scope.spRead = function() {
             Read.g();
         }
+        $scope.startWorldCard = function() {
+            $rootScope.showDialog('not open this time');
+        }
+        $scope.modifySetting = function() {
+            var modalInstance = $modal.open({
+                templateUrl: 'modifySetting.html',
+                controller: 'modifySettingCtrl',
+                windowClass: 'remodal-like',
+                backdrop: 'static',
+                resolve: {
+                    items: function() {
+                        return $scope.input;
+                    }
+                }
+            });
+            modalInstance.result.then(function(items) {
+                localStorage.setItem('$input', angular.toJson(items));
+                $scope.input = items;
+            }, function() {
+
+            });
+        }
         $scope.render = function(data) {
             try {
                 var output = JSON.parse(data);
@@ -165,4 +191,12 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             }
         }
     }
-]);
+]).controller('modifySettingCtrl', function($scope, $modalInstance, items) {
+    $scope.items = angular.copy(items);
+    $scope.save = function() {
+        $modalInstance.close($scope.items);
+    };
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+});
