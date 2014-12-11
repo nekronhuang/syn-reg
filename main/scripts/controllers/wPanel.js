@@ -1,7 +1,18 @@
 angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', ['$document', '$rootScope', '$scope', '$filter', '$q', '$modal', 'Tools', 'Write', 'Read',
     function($document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read) {
+        var path = require('path'),
+            RC;
         $document.keydown(function(evt) {
             switch (evt.originalEvent.keyIdentifier) {
+                case 'F1':
+                    if (RC) {
+                        RC.send({
+                            type: 2
+                        });
+                    } else {
+                        $rootScope.showDialog('二维码识别未开启!');
+                    }
+                    break;
                 case 'F2':
                     $scope.spWrite();
                     break;
@@ -158,6 +169,24 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         }
         $scope.spRead = function() {
             Read.g();
+        }
+        $scope.startRC532 = function() {
+            var fork = require('child_process').fork;
+            if(RC) RC.kill();
+            RC = fork(path.dirname(process.execPath)+'\\main\\scripts\\workers\\RC532.js');
+            RC.on('message', function(msg) {
+                switch (msg.type) {
+                    case 1:
+                        console.log(msg.content);
+                        break;
+                    case 2:
+                        console.log(msg.content);
+                        break;
+                }
+            });
+            RC.send({
+                type: 1
+            });
         }
         $scope.startWorldCard = function() {
             $rootScope.showDialog('not open this time');

@@ -86,5 +86,5 @@ $RECYCLE.BIN/
 /locales
 *.exe
 *.dll
-icudtl.dat
+icudtl.*
 nw.pak
