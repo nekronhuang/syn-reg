@@ -18,5 +18,12 @@ angular.module('service.export', ['service.tools']).service('Export', ['$rootSco
             }, 100);
             Tools.showLog('信息传输中,请勿断开!');
         }
+        this.s = function(buf) {
+            var filename = buf.slice(2, 26).toString();
+            fs.appendFile('./AppData/' + filename + '.txt', exportData, 'utf8', function(err) {
+                exportData = '';
+                Tools.showLog('导出完毕!');
+            });
+        }
     }
 ]);

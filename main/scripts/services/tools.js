@@ -16,9 +16,10 @@ angular.module('service.tools', []).service('Tools', ['$rootScope', '$cacheFacto
                     if (err) return console.error('write', err);
                 });
             } else {
-                $rootScope.showDialog('未连接！');
-                if($rootScope.activePanel!='sPanel'){
-                    $rootScope.activePanel='sPanel';
+                $rootScope.showDialog('未连接!');
+                if ($rootScope.activePanel != 'sPanel') {
+                    $rootScope.activePanel = 'sPanel';
+                    myCache.get('sPanel').scope().active = 0;
                 }
             }
         }
@@ -27,7 +28,7 @@ angular.module('service.tools', []).service('Tools', ['$rootScope', '$cacheFacto
                 var initArray = [
                         [0x35]
                     ],
-                    settings = JSON.parse(localStorage.getItem('$index'));
+                    settings = angular.toJson(localStorage.getItem('$index'));
                 for (var i = 0, len = settings.length; i < len; i++) {
                     var item = settings[i],
                         fnArray = new Array(4);

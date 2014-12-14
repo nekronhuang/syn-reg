@@ -94,7 +94,7 @@
               <div class="form-group">
                 <input type="text" class="form-control" ng-model="searchInput">
               </div>
-              <button type="submit" class="btn btn-primary" ng-click="addOne()">索引</button>
+              <button type="submit" class="btn btn-primary">索引</button>
               <button type="submit" class="btn btn-primary">网络</button>
               <button type="submit" class="btn btn-primary" title="只支持本地数据库" ng-click="fuzzySearch()">模糊</button>
             </div>
@@ -156,12 +156,6 @@
               <md-button class="md-raised" ng-click="spRead()">读取</md-button>
             </section>
             <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
-              <md-button class="md-fab" ng-click="importList()" aria-label="importList" tooltip="导入名单">
-                <i class="icon icon-folder-open"></i>
-              </md-button>
-              <md-button class="md-fab" ng-click="exportList()" aria-label="exportList" tooltip="导出名单">
-                <i class="icon icon-profile"></i>
-              </md-button>
               <md-button class="md-fab" ng-click="startRC532()" aria-label="startRC532" tooltip="启动二维码识别">
                 <i class="icon icon-qrcode"></i>
               </md-button>
@@ -181,9 +175,11 @@
           <div class="content">
             <div class="form-inline">
               <div class="form-group">
-                <input type="text" class="form-control">
+                <input type="text" class="form-control" ng-model="keyWord">
               </div>
-              <button type="submit" class="btn btn-primary">搜索</button>
+              <button type="submit" class="btn btn-primary" ng-click="indexSearch()">搜索</button>
+              <button type="submit" class="btn btn-primary" ng-click="prevSearch()">前一个</button>
+              <button type="submit" class="btn btn-primary" ng-click="nextSearch()">后一个</button>
             </div>
             <form class="form-horizontal" ng-nicescroll>
               <div class="form-group" ng-repeat="item in input" ng-if="item.visible">

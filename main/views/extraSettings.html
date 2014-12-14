@@ -1,8 +1,3 @@
-<div class="form-group">
-  <button class="btn btn-danger" ng-click="clear()">
-    <i class="icon-remove"></i> &nbsp;清空
-  </button>
-</div>
 <div class="form-inline dash">
   <div class="form-group">
     <input type="text" class="form-control" placeholder="hex" ng-model="$parent.hex">
@@ -15,4 +10,9 @@
   <md-switch ng-model="$root.onFormat">
     循环格式化: {{ $root.onFormat }}
   </md-switch>
+</div>
+<div class="form-inline dash">
+  <button class="btn btn-danger" ng-click="clear()">
+    <i class="icon-remove"></i> &nbsp;清空
+  </button>
 </div>

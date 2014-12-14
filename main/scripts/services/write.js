@@ -3,7 +3,7 @@ angular.module('service.write', ['service.tools']).service('Write', [
     function($rootScope, $cacheFactory, Tools) {
         var myCache = $cacheFactory.get('myCache');
         this.g = function(input) {
-            var content = new Buffer(JSON.stringify(input)),
+            var content = new Buffer(angular.toJson(input)),
                 sections = parseInt(localStorage.getItem('$infoSections')),
                 blank = new Buffer(sections * 48 - content.length),
                 buf;
@@ -31,7 +31,7 @@ angular.module('service.write', ['service.tools']).service('Write', [
             }
             db_data += '"type":0';
             db_data = '{' + db_data + '}';
-            var obj = JSON.parse(db_data);
+            var obj = angular.fromJson(db_data);
             Tools.showLog('写入完成...');
         }
     }

@@ -46,11 +46,11 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
 ]).controller('expoSettingsCtrl', ['$scope', '$rootScope',
     function($scope, $rootScope) {
         $scope.save = function() {
-            localStorage.setItem('$expo', JSON.stringify($scope.expoSettings));
+            localStorage.setItem('$expo', angular.toJson($scope.expoSettings));
             $rootScope.showDialog('保存完毕');
         }
         if (localStorage.getItem('$expo')) {
-            $scope.expoSettings = JSON.parse(localStorage.getItem('$expo'));
+            $scope.expoSettings = angular.fromJson(localStorage.getItem('$expo'));
         } else {
             $scope.expoSettings = [{
                 key: '_id',
@@ -59,15 +59,15 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
             }, {
                 key: 'name',
                 display: '展会名',
-                value: '上海科技活动周'
+                value: 'TCT ASIA 2015'
             }, {
                 key: 'startDate',
                 display: '开始日期',
-                value: '2014-9-10'
+                value: '2014-12-1'
             }, {
                 key: 'duration',
                 display: '持续天数',
-                value: '30'
+                value: '90'
             }, {
                 key: 'pass',
                 display: '抽奖要求',
@@ -107,10 +107,10 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
                 }
             }
             localStorage.setItem('$infoSections', infoSections);
-            localStorage.setItem('$index', JSON.stringify($scope.indexSettings));
+            localStorage.setItem('$index', angular.toJson($scope.indexSettings));
             $rootScope.showDialog('保存完毕');
         }
-        $scope.indexSettings = localStorage.getItem('$index') ? JSON.parse(localStorage.getItem('$index')) : [{
+        $scope.indexSettings = localStorage.getItem('$index') ? angular.fromJson(localStorage.getItem('$index')) : [{
             "start": "0",
             "end": "4",
             "fn": "00001",

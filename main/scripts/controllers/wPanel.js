@@ -1,7 +1,7 @@
+var path = require('path');
 angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', ['$document', '$rootScope', '$scope', '$filter', '$q', '$modal', 'Tools', 'Write', 'Read',
     function($document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read) {
-        var path = require('path'),
-            RC;
+        var RC;
         $document.keydown(function(evt) {
             switch (evt.originalEvent.keyIdentifier) {
                 case 'F1':
@@ -25,7 +25,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             }
         });
         if (localStorage.getItem('$input')) {
-            $scope.input = JSON.parse(localStorage.getItem('$input'));
+            $scope.input = angular.fromJson(localStorage.getItem('$input'));
         } else {
             $scope.input = [{
                 key: 'auth',
@@ -162,6 +162,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             }
             $scope.type.value = '';
             $scope.showTooltip = false;
+            $scope.$digest();
         }
         $scope.spWrite = function() {
             var output = Tools.extractData($scope.input);
@@ -172,8 +173,8 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         }
         $scope.startRC532 = function() {
             var fork = require('child_process').fork;
-            if(RC) RC.kill();
-            RC = fork(path.dirname(process.execPath)+'\\main\\scripts\\workers\\RC532.js');
+            if (RC) RC.kill();
+            RC = fork(path.dirname(process.execPath) + '\\main\\scripts\\workers\\RC532.js');
             RC.on('message', function(msg) {
                 switch (msg.type) {
                     case 1:
@@ -189,7 +190,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             });
         }
         $scope.startWorldCard = function() {
-            $rootScope.showDialog('not open this time');
+            $rootScope.showDialog('未启用!');
         }
         $scope.modifySetting = function() {
             var modalInstance = $modal.open({
@@ -212,7 +213,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         }
         $scope.render = function(data) {
             try {
-                var output = JSON.parse(data);
+                var output = angular.fromJson(data);
                 Tools.renderData(output, $scope.input);
                 $scope.$digest();
             } catch (e) {
