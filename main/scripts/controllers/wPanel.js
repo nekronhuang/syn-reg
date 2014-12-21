@@ -1,4 +1,5 @@
-var path = require('path');
+var path = require('path'),
+    edge=require('edge');
 angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', ['$document', '$rootScope', '$scope', '$filter', '$q', '$modal', 'Tools', 'Write', 'Read',
     function($document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read) {
         var RC;

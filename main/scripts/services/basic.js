@@ -29,7 +29,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                 function(sPorts, next) {
                     var results = [];
                     async.each(sPorts, function(item, cb) {
-                        if (item.readable) {
+                        if (item.isOpen()) {
                             if (typeof($rootScope.sPort.id) == 'string') {
                                 results.push({
                                     display: '读机器',

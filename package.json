@@ -11,13 +11,13 @@
   "dependencies": {
     "async": "0.9.0",
     "iconv-lite": "0.4.5",
-    "serialport": "1.4.6"
+    "serialport": "1.4.9"
   },
   "devDependencies": {
+    "edge": "^0.9.3",
     "ffi": "^1.2.7",
-    "ref": "^0.3.2",
     "nedb": "*",
-    "edge": "0.9.1-pre"
+    "ref": "^0.3.2"
   },
   "window": {
     "toolbar": true,
@@ -25,5 +25,16 @@
     "position": "center",
     "frame": true,
     "show": true
-  }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nekronhuang/syn-reg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nekronhuang/syn-reg/issues"
+  },
+  "homepage": "https://github.com/nekronhuang/syn-reg"
 }
