@@ -7,6 +7,9 @@ angular.module('service.import', ['service.tools']).service('Import', ['$rootSco
             // if(!input.email){
             //     return tips('请填写邮箱');
             // }
+            if(!localStorage.getItem('$expo')){
+                return $rootScope.showDialog('未设置展会信息!');
+            }
             var expo = angular.fromJson(localStorage.getItem('$expo')),
                 date = new Date(),
                 buf;
@@ -16,10 +19,8 @@ angular.module('service.import', ['service.tools']).service('Import', ['$rootSco
             buf.push(new Buffer([2 >> 8, 2 & 255, 24]));
             //buf.push(new Buffer([input.number>>8,input.number&255,24]));//公司编号+展会id长度
             buf.push(new Buffer(expo[0].value.toUpperCase())); //展会id
-            var startDate = (new Date(expo[2].value)).Format('yyyyMMdd');
-            buf.push(new Buffer(startDate, 'hex')); //起始日期
+            buf.push(new Buffer($filter('date')((new Date(expo[2].value)), 'yyyyMMdd'), 'hex')); //起始日期
             buf.push(new Buffer([expo[3].value])); //展会天数
-            console.log(expo)
             Tools.communicateSP($rootScope.sPort, Buffer.concat(buf));
         }
         this.s = function(buf) {

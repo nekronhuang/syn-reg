@@ -163,7 +163,6 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             }
             $scope.type.value = '';
             $scope.showTooltip = false;
-            $scope.$digest();
         }
         $scope.spWrite = function() {
             var output = Tools.extractData($scope.input);

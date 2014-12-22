@@ -84,7 +84,6 @@ angular.module('controller.rPanel', ['service.tools', 'service.import', 'service
             for (var i = 0, len = $scope.input.length; i < len; i++) {
                 $scope.input[i].value = '';
             }
-            $scope.$digest();
         }
         $scope.loadList = function() {
             var elm = $('<input type="file" nwworkingdir="' + path.dirname(process.execPath) + '\\stable\\dat">');
