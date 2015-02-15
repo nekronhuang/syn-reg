@@ -8,7 +8,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                     sp.list(next);
                 },
                 function(ports, next) {
-                    console.log(ports);
+                    console.debug('>>>>>',ports);
                     if (ports.length) {
                         var now = $rootScope.sPort ? $rootScope.sPort.path : null;
                         async.map(ports, function(item, cb) {
@@ -53,12 +53,12 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                         date = new Date();
                                     item.once('disconnect', function() {
                                         item.close(function(err) {
-                                            console.log('error disconnect', err);
+                                            console.error('error disconnect', err);
                                         });
                                         cb();
                                     }).once('error', function() {
                                         item.close(function(err) {
-                                            console.log('error closed', err);
+                                            console.error('error closed', err);
                                         });
                                         cb();
                                     }).on('data', function(buf) {
@@ -137,11 +137,13 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                     $rootScope.sPort.on('data', function(buf) {
                         var data = buf.toString(),
                             status = data.substring(0, 2);
-                        console.log(data);
+                        console.debug('>>>>>',data);
+                        // console.debug('>>>>>',buf.toString('hex'));
                         if (status.indexOf('b') != -1) {
                             Tools.showLog('通讯开始，请勿断开连接');
                         }
                         if (status.indexOf('f') != -1) {
+                            console.error('error code',buf.toString('hex'));
                             Tools.showLog('发送失败，请重新发送命令!');
                             if (status == '5f') {
                                 Format.c();

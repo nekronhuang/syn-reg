@@ -1,5 +1,8 @@
-var gui = require('nw.gui'),
-    iconv = require('iconv-lite');
+var gui = require('nw.gui');
+
+process.on('uncaughtException', function(e) {
+    console.error('uncaughtException:   ' + e);
+});
 
 angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 'ngMaterial', 'ui.bootstrap']).run(['$window', '$rootScope', '$timeout', '$cacheFactory', '$mdToast',
     function($window, $rootScope, $timeout, $cacheFactory, $mdToast) {
@@ -13,7 +16,7 @@ angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 
         $window.onbeforeunload = function(event) {
             if ($rootScope.sPort) $rootScope.sPort.close(function() {});
         }
-        iconv.extendNodeEncodings();
+        // iconv.extendNodeEncodings();
         var myCache = $cacheFactory('myCache');
         myCache.put('wPanel', angular.element('#wPanel'));
         myCache.put('rPanel', angular.element('#rPanel'));
@@ -32,8 +35,12 @@ angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 
     }
 ]).controller('headerCtrl', ['$rootScope', '$scope',
     function($rootScope, $scope) {
-        $scope.minimizeToTray = function() {
-
+        $scope.isKeyShown=false;
+        $scope.toggleKeyShown=function(){
+            $scope.isKeyShown=!$scope.isKeyShown;
+            if(!$scope.$$phase) {
+                $scope.$digest();
+            }
         }
         $scope.minimize = function() {
             gui.Window.get().minimize();
@@ -41,8 +48,10 @@ angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 
         $scope.close = function() {
             gui.App.quit();
         }
+        $scope.isKiosk = false;
         $scope.toggleMaximize = function() {
-
+            $scope.isKiosk = true;
+            gui.Window.get().toggleKioskMode();
         }
     }
 ]).controller('mainCtrl', ['$scope',

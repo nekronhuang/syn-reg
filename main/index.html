@@ -35,9 +35,66 @@
       <div class="container-fluid">
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav pull-right">
-            <li>
-              <a href="#"> <i class="icon icon-arrow-down-right-2"></i>
+            <li ng-click="toggleKeyShown()" class="dropdown">
+              <a href="#"> <i class="icon icon-keyboard"></i>
               </a>
+              <ul class="dropdown-menu show" ng-show="isKeyShown" style="min-width:200px;max-height:450px;">
+                <li>
+                  <a href="###">
+                    CTRL+S<span style="inline-block" class="pull-right">制卡</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    TAB<span style="inline-block" class="pull-right">下一栏</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    SHIFT+TAB<span style="inline-block" class="pull-right">上一栏</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    CTRL+编号<span style="inline-block" class="pull-right">基础栏跳转</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    ALT+编号<span style="inline-block" class="pull-right">问卷栏跳转</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    F1<span style="inline-block" class="pull-right">写卡</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    F2<span style="inline-block" class="pull-right">读卡</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    F3<span style="inline-block" class="pull-right">打印胸卡</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    F4<span style="inline-block" class="pull-right">打印导览图</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    F9<span style="inline-block" class="pull-right">清空输入项</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="###">
+                    F12<span style="inline-block" class="pull-right">开/关帮助</span>
+                  </a>
+                </li>
+              </ul>
             </li>
             <li ng-click="minimize()">
               <a href="#"> <i class="icon icon-minus"></i>
@@ -45,7 +102,7 @@
             </li>
             <li ng-click="toggleMaximize()">
               <a href="#">
-                <i class="icon icon-expand-2"></i>
+                <i class="icon" ng-class="isKiosk?'icon-contract-2':'icon-expand-2'"></i>
               </a>
             </li>
             <li ng-click="close()">
@@ -98,21 +155,21 @@
               <button type="submit" class="btn btn-primary">网络</button>
               <button type="submit" class="btn btn-primary" title="只支持本地数据库" ng-click="fuzzySearch()">模糊</button>
             </div>
-            <form class="form-horizontal" ng-nicescroll>
-              <div class="form-group">
+            <form class="form-horizontal">
+              <div class="form-group" id="basic-info">
                 <h2><small>基础信息：</small></h2>
-                <div class="col-sm-3" ng-repeat="item in input" ng-if="item.visible" style="margin-bottom:15px;">
+                <div class="col-sm-3 input-wrap" ng-repeat="item in input" ng-if="item.visible" style="margin-bottom:15px;">
                   <div class="row">
                     <label class="col-sm-3 control-label">{{item.display}}</label>
                     <div class="col-sm-8" ng-switch on="item.search">
-                      <input class="form-control" ng-model="item.value" ng-switch-when="all" typeahead="c as c.name for c in getNameSearch($viewValue)" typeahead-on-select='onSelectPart($item, $model, $label)' typeahead-template-url="nameSearch.html" typeahead-wait-ms="10">
-                      <input class="form-control" ng-model="item.value" ng-switch-when="one" typeahead="c as c.company for c in companySearch($viewValue) | filter:$viewValue | limitTo:10">
-                      <input class="form-control" ng-model="item.value" ng-disabled="item.disabled" ng-switch-default>
+                      <input class="form-control" ng-model="info[item.key]" ng-switch-when="all" typeahead="c as c.name for c in getNameSearch($viewValue)" typeahead-on-select='onSelectPart($item, $model, $label)' typeahead-template-url="nameSearch.html" typeahead-wait-ms="10">
+                      <input class="form-control" ng-model="info[item.key]" ng-switch-when="one" typeahead="c as c.company for c in companySearch($viewValue) | filter:$viewValue | limitTo:10">
+                      <input class="form-control" ng-model="info[item.key]" ng-switch-default>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <h2><small>登记情况：</small></h2>
                 <div class="col-sm-3" ng-repeat="item in extraInput" style="margin-bottom:15px;">
                   <div class="row">
@@ -127,14 +184,14 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <h2><small>问卷调查：</small></h2>
-                <div class="col-sm-3" ng-repeat="item in questions track by $index" style="margin-bottom:15px;">
+              </div> -->
+              <div class="form-group" id="qn-info">
+                <h2><small>问卷信息：</small></h2>
+                <div class="col-sm-3 input-wrap" ng-repeat="item in info.qn track by $index" style="margin-bottom:15px;">
                   <div class="row">
                     <label class="col-sm-3 control-label">问题{{$index+1}}</label>
                     <div class="col-sm-8">
-                      <input class="form-control" ng-model="questions[$index]">
+                      <input class="form-control" ng-model="info.qn[$index]">
                     </div>
                   </div>
                 </div>
@@ -143,8 +200,8 @@
                 <h2><small>打印设置：</small></h2>
                 <label class="col-sm-2 control-label">胸牌类型：</label>
                 <div class="col-sm-8">
-                  <label class="radio-inline" ng-repeat="item in type.kind">
-                    <input type="radio" ng-model="type.value" ng-value="item.value"> {{item.display}}
+                  <label class="radio-inline" ng-repeat="item in reg_type.kind">
+                    <input type="radio" ng-model="reg_type.value" ng-value="item.value"> {{item.display}}
                   </label>
                 </div>
               </div>
@@ -152,13 +209,13 @@
           </div>
           <footer layout>
             <section class="funcbar" layout="vertical" layout-sm="horizontal" layout-align="center center">
-              <md-button class="md-raised" ng-click="spWrite()">制卡</md-button>
-              <md-button class="md-raised" ng-click="spRead()">读取</md-button>
+              <md-button class="md-raised" id="make-btn" ng-click="spWrite();$event.stopPropagation();">制卡</md-button>
+              <md-button class="md-raised">写卡</md-button>
+              <md-button class="md-raised" ng-click="spRead()">读卡</md-button>
+              <md-button class="md-raised">打印胸卡</md-button>
+              <md-button class="md-raised">打印导览图</md-button>
             </section>
             <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
-              <md-button class="md-fab" ng-click="startRC532()" aria-label="startRC532" tooltip="启动二维码识别">
-                <i class="icon icon-qrcode"></i>
-              </md-button>
               <md-button class="md-fab" ng-click="startWorldCard()" aria-label="startWorldCard" tooltip="启动名片识别">
                 <i class="icon icon-newspaper"></i>
               </md-button>
@@ -181,7 +238,7 @@
               <button type="submit" class="btn btn-primary" ng-click="prevSearch()">前一个</button>
               <button type="submit" class="btn btn-primary" ng-click="nextSearch()">后一个</button>
             </div>
-            <form class="form-horizontal" ng-nicescroll>
+            <form class="form-horizontal">
               <div class="form-group" ng-repeat="item in input" ng-if="item.visible">
                 <label class="col-sm-3 control-label">{{item.display}}</label>
                 <div class="col-sm-6">
@@ -245,28 +302,13 @@
       </div>
     </section>
   </div>
-  <script type="text/ng-template" id="modifySetting.html">
-    <div class="modal-header">
-      <h3>输入项设置</h3>
-      <button class="close" ng-click="cancel()">×</button>
-    </div>
-    <div class="modal-body">
-      <md-checkbox ng-model="item.visible" ng-disabled="item.disabled" aria-label="modifySetting" ng-repeat="item in items">
-        {{ item.display }}
-      </md-checkbox>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-default" ng-click="cancel()">取消</button>
-      <button class="btn btn-success" ng-click="save()">确认</button>
-    </div>
-  </script>
   <!--main-->
   <script type="text/javascript" src="scripts/main.js" charset="utf-8"></script>
   <!--controllers-->
-  <script type="text/javascript" src="scripts/controllers/wPanel.js" charset="utf-8"></script>
-  <script type="text/javascript" src="scripts/controllers/rPanel.js" charset="utf-8"></script>
-  <script type="text/javascript" src="scripts/controllers/sPanel.js" charset="utf-8"></script>
-  <script type="text/javascript" src="scripts/controllers/cPanel.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/controllers/writer.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/controllers/reader.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/controllers/setting.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/controllers/console.js" charset="utf-8"></script>
   <!--services-->
   <script type="text/javascript" src="scripts/services/write.js" charset="utf-8"></script>
   <script type="text/javascript" src="scripts/services/read.js" charset="utf-8"></script>

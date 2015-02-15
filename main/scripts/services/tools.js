@@ -28,7 +28,7 @@ angular.module('service.tools', []).service('Tools', ['$rootScope', '$cacheFacto
                 var initArray = [
                         [0x35]
                     ],
-                    settings = angular.toJson(localStorage.getItem('$index'));
+                    settings = angular.fromJson(localStorage.getItem('$index'));
                 for (var i = 0, len = settings.length; i < len; i++) {
                     var item = settings[i],
                         fnArray = new Array(4);
@@ -47,16 +47,6 @@ angular.module('service.tools', []).service('Tools', ['$rootScope', '$cacheFacto
                 })));
             }
             return myCache.get('indexInit');
-        }
-        this.extractData = function(arr) {
-            var obj = {};
-            for (var i = 0, len = arr.length; i < len; i++) {
-                var item = arr[i];
-                if (item.value) {
-                    obj[item.key] = item.value;
-                }
-            }
-            return obj;
         }
         this.renderData = function(obj, arr) {
             for (var i = 0, len = arr.length; i < len; i++) {

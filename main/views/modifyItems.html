@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h3>输入项设置</h3>
+  <button class="close" ng-click="cancel()">×</button>
+</div>
+<div class="modal-body">
+  <div style="margin-left:35px;">
+    <md-switch ng-model="$root.onFormat">
+        实时搜索: {{ $root.onFormat }}
+      </md-switch>
+  </div>
+  <md-checkbox ng-model="item.visible" ng-disabled="item.disabled" aria-label="modifySetting" ng-repeat="item in items" class="text-left">
+    {{ item.display }}
+  </md-checkbox>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default" ng-click="cancel()">取消</button>
+  <button class="btn btn-success" ng-click="save()">确认</button>
+</div>

@@ -3,6 +3,7 @@ angular.module('service.write', ['service.tools']).service('Write', [
     function($rootScope, $cacheFactory, Tools) {
         var myCache = $cacheFactory.get('myCache');
         this.g = function(input) {
+            console.log(input)
             var content = new Buffer(angular.toJson(input)),
                 sections = parseInt(localStorage.getItem('$infoSections')),
                 blank = new Buffer(sections * 48 - content.length),

@@ -417,7 +417,7 @@ header.navbar .navbar-nav li a {
 #main .control-panel footer .md-raised {
     background-color: #fff;
     color: #444;
-    width: 8em;
+    width: 88px;
     margin: 0px 15px;
 }
 #main .control-panel footer .md-raised:not([disabled]):hover, #main .control-panel footer .md-raised:not([disabled]).focus {
@@ -509,12 +509,6 @@ header.navbar .navbar-nav li a {
 #sPanel .tab-content .form-horizontal > .form-inline {
     padding: 10px 20px;
 }
-#sPanel .tab-content .form-horizontal .scroll {
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: 90%;
-    width: 100%;
-}
 #sPanel .tab-content .form-horizontal .scroll > .form-group, #sPanel .tab-content .form-horizontal .scroll > .form-inline {
     padding: 20px;
 }
@@ -527,29 +521,4 @@ header.navbar .navbar-nav li a {
 }
 #sPanel #index-settings .form-inline input[type="text"] {
     width: 100px;
-}
-/*wpanel-Settings*/
-#wPanel-settings .input-sort {
-    border-right: 1px solid #dadada;
-    overflow-y: auto;
-}
-#wPanel-settings .input-sort ol {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-    height: 400px;
-    padding-bottom: 20px;
-}
-#wPanel-settings .input-sort li {
-    padding: 5px 15px;
-    margin-bottom: 10px;
-    border: 1px solid transparent;
-    background: #fff;
-    border-color: #98cce6;
-    color: #3A87AD;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.11);
-    transition: background .4s;
-}
-#wPanel-settings .input-sort li.active {
-    background: #D9EDF7;
 }
