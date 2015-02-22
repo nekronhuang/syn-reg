@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h3>今日统计</h3>
+  <button class="close" ng-click="$dismiss()">×</button>
+</div>
+<div class="modal-body text-left">
+  <div ng-repeat="(key,val) in results">
+    <span>{{key}}</span>
+    <span>:&nbsp;&nbsp;</span>
+    <span>{{val}}</span>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-success" ng-click="$dismiss()">确认</button>
+</div>

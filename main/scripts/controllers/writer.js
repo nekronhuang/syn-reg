@@ -1,6 +1,7 @@
 var path = require('path'),
     edge = require('edge');
-angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read, writerInput) {
+angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools','service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read, writerInput, DB) {
+    var async=require('async');
     $scope.info = {
         qn: new Array(7)
     };
@@ -17,16 +18,67 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         if (!$scope.$$phase) {
             $scope.$digest();
         }
-    }
+    };
     $scope.spWrite = function() {
-        Write.g($scope.info);
-    }
+        Write.g($scope.info, $scope.reg_type.value);
+    };
     $scope.spRead = function() {
         Read.g();
-    }
+    };
+    $scope.printBadge = function() {
+
+    };
+    $scope.printGuide = function() {
+
+    };
+    $scope.make = function() {
+        $scope.spWrite();
+        $scope.printBadge();
+        $scope.printGuide();
+    };
+    $scope.countLogs = function() {
+        var today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
+        today=today.getTime();
+        var tomorrow = today + 1000 * 60 * 60 * 24;
+        async.parallel({
+            chinese: function(next){
+                DB.logs.count({
+                    reg_time: {
+                        $gte: today,
+                        $lte: tomorrow
+                    },
+                    cy:{
+                        $in:['','中国']
+                    }
+                }, next);
+            },
+            total:function(next){
+                DB.logs.count({
+                    reg_time: {
+                        $gte: today,
+                        $lte: tomorrow
+                    }
+                }, next);
+            }
+        },function(err,res){
+            if(err) console.error(err);
+            var modalInstance = $modal.open({
+                templateUrl: './views/todayStat.html',
+                windowClass: 'remodal-like',
+                scope: angular.extend($scope.$new(true), {
+                    results:res
+                })
+            });
+            console.log(res,modalInstance);
+        });
+    };
     $scope.startWorldCard = function() {
         $rootScope.showDialog('未启用!');
-    }
+    };
     $scope.modifySetting = function() {
         var modalInstance = $modal.open({
             templateUrl: './views/modifyItems.html',
@@ -45,7 +97,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         }, function() {
 
         });
-    }
+    };
     $scope.render = function(data) {
         try {
             var output = angular.fromJson(data);
@@ -54,18 +106,16 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         } catch (e) {
             console.error('not json');
         }
-    }
+    };
     $document.keydown(function(evt) {
         evt.stopPropagation();
-        var $makeBtn = angular.element('#make-btn'),
-            $basicInfo = angular.element('#basic-info .input-wrap'),
-            $qnInfo = angular.element('#qn-info .input-wrap'),
-            $printBtn = 1;
+        var $basicInfo = angular.element('#basic-info .input-wrap'),
+            $qnInfo = angular.element('#qn-info .input-wrap');
         // console.log(evt);
         switch (evt.keyCode) {
-            case 83: //s
+            case 83: //ctrl+s
                 if (evt.ctrlKey) {
-                    $makeBtn.trigger('click');
+                    $scope.make();
                 }
                 break;
             case 49: //1
@@ -90,15 +140,15 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }
                 break;
             case 112: //F1
-                Write.g($scope.info);
+                $scope.spWrite();
                 break;
             case 113: //F2
                 $scope.spRead();
                 break;
-            case 120:
+            case 120: //F9
                 $scope.clearAll();
                 break;
-            case 123:
+            case 123: //F12
                 angular.element('#wrapper .navbar').scope().toggleKeyShown();
                 break;
         }

@@ -1,12 +1,6 @@
 angular.module('service.import', ['service.tools']).service('Import', ['$rootScope', '$filter', 'Tools',
     function($rootScope, $filter, Tools) {
         this.g = function(input) {
-            // if(!input.companyId){
-            //     return tips('未选择公司');
-            // }
-            // if(!input.email){
-            //     return tips('请填写邮箱');
-            // }
             if(!localStorage.getItem('$expo')){
                 return $rootScope.showDialog('未设置展会信息!');
             }

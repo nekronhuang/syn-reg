@@ -389,6 +389,7 @@ header.navbar .navbar-nav li a {
     bottom: 50px;
     left: 0;
     right: 0;
+    overflow-y: auto;
 }
 #center .control-panel .form-horizontal > .form-group {
     margin: 0;
@@ -401,6 +402,9 @@ header.navbar .navbar-nav li a {
 }
 #center .control-panel .form-horizontal > .form-group h2 {
     margin-top: 0;
+}
+#center .control-panel .form-horizontal > .form-group .input-wrap{
+    margin-bottom: 15px;
 }
 #main .control-panel footer {
     position: absolute;
@@ -509,8 +513,13 @@ header.navbar .navbar-nav li a {
 #sPanel .tab-content .form-horizontal > .form-inline {
     padding: 10px 20px;
 }
+#sPanel .tab-content .form-horizontal .scroll{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 #sPanel .tab-content .form-horizontal .scroll > .form-group, #sPanel .tab-content .form-horizontal .scroll > .form-inline {
-    padding: 20px;
+    padding: 10px;
+    margin-bottom: 0;
 }
 #sPanel .tab-content .form-horizontal .dash {
     border-bottom: 1px dashed #efefef;

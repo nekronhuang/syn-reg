@@ -21,9 +21,6 @@ angular.module('service.read', ['service.tools']).service('Read', ['$rootScope',
             myCache.get('wPanel').scope().render(data.substring(2));
             Tools.showLog('读取完成!');
         }
-        this.u = function() {
-            Tools.showLog('此卡未初始化!');
-        }
         function isEmpty(buf,sections) {
             var blank = new Buffer([20, 28, 241, 185, 223, 142, 227, 250, 128, 136, 12, 105, 64, 228, 173, 99]).toString();
             for (var i = 0, len = sections * 48 / 16; i < len; i++) {

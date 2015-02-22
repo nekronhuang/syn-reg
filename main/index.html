@@ -16,7 +16,6 @@
   <script src="../bower_components/angular-aria/angular-aria.js"></script>
   <script src="../bower_components/hammerjs/hammer.js"></script>
   <script src="../bower_components/angular-material/angular-material.js"></script>
-  <script src="../bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
   <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 </head>
 
@@ -158,7 +157,7 @@
             <form class="form-horizontal">
               <div class="form-group" id="basic-info">
                 <h2><small>基础信息：</small></h2>
-                <div class="col-sm-3 input-wrap" ng-repeat="item in input" ng-if="item.visible" style="margin-bottom:15px;">
+                <div class="col-sm-3 input-wrap" ng-repeat="item in input" ng-if="item.visible">
                   <div class="row">
                     <label class="col-sm-3 control-label">{{item.display}}</label>
                     <div class="col-sm-8" ng-switch on="item.search">
@@ -187,7 +186,7 @@
               </div> -->
               <div class="form-group" id="qn-info">
                 <h2><small>问卷信息：</small></h2>
-                <div class="col-sm-3 input-wrap" ng-repeat="item in info.qn track by $index" style="margin-bottom:15px;">
+                <div class="col-sm-3 input-wrap" ng-repeat="item in info.qn track by $index">
                   <div class="row">
                     <label class="col-sm-3 control-label">问题{{$index+1}}</label>
                     <div class="col-sm-8">
@@ -209,13 +208,16 @@
           </div>
           <footer layout>
             <section class="funcbar" layout="vertical" layout-sm="horizontal" layout-align="center center">
-              <md-button class="md-raised" id="make-btn" ng-click="spWrite();$event.stopPropagation();">制卡</md-button>
-              <md-button class="md-raised">写卡</md-button>
+              <md-button class="md-raised" ng-click="make();$event.stopPropagation();">制卡</md-button>
+              <md-button class="md-raised" ng-click="spWrite();$event.stopPropagation();">写卡</md-button>
               <md-button class="md-raised" ng-click="spRead()">读卡</md-button>
               <md-button class="md-raised">打印胸卡</md-button>
               <md-button class="md-raised">打印导览图</md-button>
             </section>
             <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
+              <md-button class="md-fab" ng-click="countLogs()" aria-label="countLogs" tooltip="统计">
+                <i class="icon icon-stats"></i>
+              </md-button>
               <md-button class="md-fab" ng-click="startWorldCard()" aria-label="startWorldCard" tooltip="启动名片识别">
                 <i class="icon icon-newspaper"></i>
               </md-button>
@@ -239,10 +241,26 @@
               <button type="submit" class="btn btn-primary" ng-click="nextSearch()">后一个</button>
             </div>
             <form class="form-horizontal">
-              <div class="form-group" ng-repeat="item in input" ng-if="item.visible">
-                <label class="col-sm-3 control-label">{{item.display}}</label>
-                <div class="col-sm-6">
-                  <input class="form-control" ng-model="item.value">
+              <div class="form-group">
+                <h2><small>展商信息：</small></h2>
+                <div class="col-sm-4 input-wrap" ng-repeat="item in input">
+                  <div class="row">
+                    <label class="col-sm-3 control-label">{{item.display}}</label>
+                    <div class="col-sm-6">
+                      <input class="form-control" ng-model="info[item.key]">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <h2><small>展会信息：</small></h2>
+                <div class="col-sm-4 input-wrap" ng-repeat="(key,val) in expoInfo">
+                  <div class="row">
+                    <label class="col-sm-3 control-label">{{key}}</label>
+                    <div class="col-sm-6">
+                      <input class="form-control" ng-model="expoInfo[key]" disabled>
+                    </div>
+                  </div>
                 </div>
               </div>
             </form>
@@ -318,6 +336,7 @@
   <script type="text/javascript" src="scripts/services/basic.js" charset="utf-8"></script>
   <script type="text/javascript" src="scripts/services/advanced.js" charset="utf-8"></script>
   <script type="text/javascript" src="scripts/services/tools.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scripts/services/db.js" charset="utf-8"></script>
   <!--directives-->
   <script type="text/javascript" src="scripts/directives/directives.js" charset="utf-8"></script>
 </body>

@@ -1,29 +1,42 @@
 angular.module('service.export', ['service.tools']).service('Export', ['$rootScope', 'Tools',
     function($rootScope, Tools) {
-        var exportData = '';
+        var exportData = '',
+            fragment,
+            progress=0,
+            total;
         this.g = function() {
-            Tools.communicateSP($rootScope.sPort, new Buffer('6'));
-        }
+            Tools.communicateSP($rootScope.sPort, new Buffer([0x36,0x01]));
+        };
         this.b = function(buf) {
-            for (var i = 0, len = buf[2]; i < len; i++) {
-                var now = buf.slice(16 * i + 3, 16 * i + 19),
-                    cardid = now.toString('hex', 0, 7),
-                    time = '20';
-                time += now.toString('hex', 8, 9) + '-' + now.toString('hex', 9, 10) + '-' + now.toString('hex', 10, 11) + ' ';
-                time += now.toString('hex', 11, 12) + ':' + now.toString('hex', 12, 13) + ':' + now.toString('hex', 13, 14);
-                exportData += parseInt(cardid, 16).toString() + ',' + time + '\r\n';
+            fragment=buf[2];
+            progress=0;
+            total=buf.readInt32BE(3);
+            Tools.communicateSP($rootScope.sPort, new Buffer([0x36,0x01,0x63]));
+            Tools.showLog('信息传输中,请勿断开! '+progress+'/'+total);
+        };
+        this.c =function(buf){
+            for(var i=0,len=(buf.length-2)/fragment;i<len;i++){
+                progress++;
+                var start=fragment*i+2,
+                    end=start+fragment;
+                var now=buf.toString('hex',start,end);
             }
-            setTimeout(function() {
-                Tools.communicateSP($rootScope.sPort, new Buffer('6c'));
-            }, 100);
-            Tools.showLog('信息传输中,请勿断开!');
-        }
+            Tools.communicateSP($rootScope.sPort, new Buffer([0x36,0x01,0x63]));
+            Tools.showLog('信息传输中,请勿断开! '+progress+'/'+total);
+        };
         this.s = function(buf) {
-            var filename = buf.slice(2, 26).toString();
-            fs.appendFile('./AppData/' + filename + '.txt', exportData, 'utf8', function(err) {
-                exportData = '';
-                Tools.showLog('导出完毕!');
-            });
+            for(var i=0,len=total-progress;i<len;i++){
+                progress++;
+                var start=fragment*i+2,
+                    end=start+fragment;
+                var now=buf.toString('hex',start,end);
+            }
+            Tools.showLog('导出完毕! '+progress+'/'+total);
+            // var filename = buf.slice(2, 26).toString();
+            // fs.appendFile('./AppData/' + filename + '.txt', exportData, 'utf8', function(err) {
+            //     exportData = '';
+            //     Tools.showLog('导出完毕!');
+            // });
         }
     }
 ]);

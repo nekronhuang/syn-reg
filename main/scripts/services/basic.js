@@ -8,7 +8,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                     sp.list(next);
                 },
                 function(ports, next) {
-                    console.debug('>>>>>',ports);
+                    console.debug('>>>>>ports:',ports);
                     if (ports.length) {
                         var now = $rootScope.sPort ? $rootScope.sPort.path : null;
                         async.map(ports, function(item, cb) {
@@ -63,7 +63,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                         cb();
                                     }).on('data', function(buf) {
                                         auto = false;
-                                        if (buf[2] == 119) {
+                                        if (buf[2] == 0x77) {
                                             results.push({
                                                 display: '写机器',
                                                 com: item.path
@@ -74,11 +74,10 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                                 }
                                                 cb();
                                             });
-                                        } else if (buf[2] == 114) {
+                                        } else if (buf[2] == 0x72) {
                                             results.push({
                                                 display: '读机器',
-                                                com: item.path,
-                                                readId: buf.toString('hex', 3)
+                                                com: item.path
                                             });
                                             item.close(function(err) {
                                                 if (err) {
@@ -91,7 +90,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                     Tools.communicateSP(item, Buffer.concat([
                                         new Buffer([0x34]),
                                         new Buffer($filter('date')(date, 'yyyyMMddhhmmss'), 'hex'),
-                                        new Buffer([date.getDay() + 1])
+                                        new Buffer([date.getDay()])
                                     ]));
                                     setTimeout(function() {
                                         if (auto) {
@@ -135,15 +134,14 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                         if (err) return $rootScope.sPort = null;
                     });
                     $rootScope.sPort.on('data', function(buf) {
-                        var data = buf.toString(),
-                            status = data.substring(0, 2);
-                        console.debug('>>>>>',data);
-                        // console.debug('>>>>>',buf.toString('hex'));
-                        if (status.indexOf('b') != -1) {
+                        var data = buf.toString('hex'),
+                            status = data.substring(0, 4);
+                        console.debug('>>>>>buffer:',data);
+                        if (status.substring(2,4)=='62') {
                             Tools.showLog('通讯开始，请勿断开连接');
                         }
-                        if (status.indexOf('f') != -1) {
-                            console.error('error code',buf.toString('hex'));
+                        if (status.substring(2,4)== '66') {
+                            console.error('error code',data);
                             Tools.showLog('发送失败，请重新发送命令!');
                             if (status == '5f') {
                                 Format.c();
@@ -151,31 +149,31 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                             return;
                         }
                         switch (status) {
-                            case '1c':
+                            case '3163':
                                 Write.c();
                                 break;
-                            case '1s':
+                            case '3173':
                                 Write.s(data);
                                 break;
-                            case '2s':
+                            case '3273':
                                 Read.s(buf);
                                 break;
-                            case '2u':
-                                Read.u();
-                                break;
-                            case '4s':
+                            case '3473':
                                 Import.s(buf);
                                 break;
-                            case '5s':
+                            case '3573':
                                 Format.s();
                                 break;
-                            case '6b':
+                            case '3662':
                                 Export.b(buf);
                                 break;
-                            case '6s':
+                            case '3663':
+                                Export.c(buf);
+                                break;
+                            case '3673':
                                 Export.s(buf);
                                 break;
-                            case '9s':
+                            case '3973':
                                 Advanced.s9();
                                 break;
                         }
