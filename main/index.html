@@ -136,7 +136,7 @@
             </a>
             <ul ng-nicescroll="{cursorcolor:'#aaa',cursorborder:'1px solid #1a1c20'}">
               <li ng-repeat="item in info">
-                {{item.date|date:'yyyy-M-dd H:mm'}}
+                {{item.date|date:'yyyy-MM-dd HH:mm'}}
                 <br> {{item.msg}}
               </li>
             </ul>
@@ -246,7 +246,7 @@
                 <div class="col-sm-4 input-wrap" ng-repeat="item in input">
                   <div class="row">
                     <label class="col-sm-3 control-label">{{item.display}}</label>
-                    <div class="col-sm-6">
+                    <div class="col-sm-8">
                       <input class="form-control" ng-model="info[item.key]">
                     </div>
                   </div>
@@ -257,7 +257,7 @@
                 <div class="col-sm-4 input-wrap" ng-repeat="(key,val) in expoInfo">
                   <div class="row">
                     <label class="col-sm-3 control-label">{{key}}</label>
-                    <div class="col-sm-6">
+                    <div class="col-sm-8">
                       <input class="form-control" ng-model="expoInfo[key]" disabled>
                     </div>
                   </div>
@@ -271,9 +271,6 @@
               <md-button class="md-raised" ng-click="spExport()">导出</md-button>
             </section>
             <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
-              <md-button class="md-fab" ng-click="loadList()" aria-label="loadList" tooltip="导入名单">
-                <i class="icon icon-profile"></i>
-              </md-button>
               <md-button class="md-fab" ng-click="clearAll()" aria-label="clearAll" tooltip="清空输入项">
                 <i class="icon icon-spinner-6"></i>
               </md-button>

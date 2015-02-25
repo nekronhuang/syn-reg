@@ -1,7 +1,6 @@
-var path = require('path'),
-    edge = require('edge');
-angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools','service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read, writerInput, DB) {
-    var async=require('async');
+var path = require('path');
+angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $filter, $q, $modal, Tools, Write, Read, writerInput, DB) {
+    var async = require('async');
     $scope.info = {
         qn: new Array(7)
     };
@@ -42,21 +41,21 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         today.setMinutes(0);
         today.setSeconds(0);
         today.setMilliseconds(0);
-        today=today.getTime();
+        today = today.getTime();
         var tomorrow = today + 1000 * 60 * 60 * 24;
         async.parallel({
-            chinese: function(next){
+            chinese: function(next) {
                 DB.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
                     },
-                    cy:{
-                        $in:['','中国']
+                    cy: {
+                        $in: ['', '中国']
                     }
                 }, next);
             },
-            total:function(next){
+            total: function(next) {
                 DB.logs.count({
                     reg_time: {
                         $gte: today,
@@ -64,16 +63,16 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     }
                 }, next);
             }
-        },function(err,res){
-            if(err) console.error(err);
+        }, function(err, res) {
+            if (err) console.error(err);
             var modalInstance = $modal.open({
                 templateUrl: './views/todayStat.html',
                 windowClass: 'remodal-like',
                 scope: angular.extend($scope.$new(true), {
-                    results:res
+                    results: res
                 })
             });
-            console.log(res,modalInstance);
+            console.log(res, modalInstance);
         });
     };
     $scope.startWorldCard = function() {

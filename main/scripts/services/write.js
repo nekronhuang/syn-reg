@@ -36,7 +36,7 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
                 }, next);
             },
             function(next) {
-                var link = $window.sessionStorage.getItem('$server') + '/insert?computer=' + $window.localStorage.getItem('$computer');
+                var link = $window.sessionStorage.getItem('$server') + '/update?computer=' + $window.localStorage.getItem('$computer');
                 $http.post(link, doc, {
                     timeout: 1000
                 }).success(next).error(next);

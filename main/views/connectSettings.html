@@ -43,13 +43,13 @@
   <div class="form-group">
     <label class="col-sm-2 control-label">条码打印机:</label>
     <div class="col-sm-2">
-      <select class="form-control" ng-model="barcode" ng-options="item as item for item in printer"></select>
+      <select class="form-control" ng-model="$parent.barcode" ng-options="item as item for item in printer"></select>
     </div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">激光打印机:</label>
     <div class="col-sm-2">
-      <select class="form-control" ng-model="laser" ng-options="item as item for item in printer"></select>
+      <select class="form-control" ng-model="$parent.laser" ng-options="item as item for item in printer"></select>
     </div>
   </div>
   <div class="form-group">

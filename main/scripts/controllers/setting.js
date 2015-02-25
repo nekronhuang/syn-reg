@@ -1,8 +1,8 @@
 angular.module('controller.sPanel', ['service.basic', 'service.advanced']).controller('sPanelCtrl', function($scope) {
     $scope.error = function() {
         $scope.$broadcast('error');
-    }
-}).controller('connectSettingsCtrl', function($rootScope, $scope, $window, $http, Basic) {
+    };
+}).controller('connectSettingsCtrl', function($rootScope, $scope, $window, $http, Basic, Tools) {
     $scope.spCheck = {
         text: '请点击...',
         visible: false,
@@ -51,18 +51,23 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
             $window.sessionStorage.setItem('$server', server);
         }).error(function() {
             $rootScope.showDialog('连接异常');
+            $window.sessionStorage.setItem('$server', 'http://localhost:'+$scope.server.port);
         });
     };
-    $scope.barcode = '';
-    $scope.laser = '';
     $scope.searchPrinter = function() {
-        $scope.printer=[0,1,2,3,4,5];
+        Tools.communicatePrinter({method:'0'});
     };
     $scope.setupPrinter = function() {
         $window.sessionStorage.setItem('$barcode', $scope.barcode);
         $window.sessionStorage.setItem('$laser', $scope.laser);
+        //Tools.communicatePrinter({method:'1',printname:$window.sessionStorage.getItem('$barcode')})
     };
     $scope.searchPrinter();
+    $scope.$on('fork',function(evt,msg){
+        if(msg.name){
+            $scope.printer=msg.name.split(',');
+        }
+    });
 }).controller('expoSettingsCtrl', function($window, $scope, $rootScope) {
     $scope.save = function() {
         $window.localStorage.setItem('$expo', angular.toJson($scope.expoSettings));
@@ -72,6 +77,7 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         $scope.expoSettings = angular.fromJson($window.localStorage.getItem('$expo'));
     } else {
         $scope.expoSettings = {
+            _id:'54ed88d0faab2c1ede3a56c4',
             name: 'TCT ASIA',
             full_name: '亚洲3D打印、增材制造展览会 TCT亚洲峰会',
             year: '2015',
@@ -79,7 +85,7 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
             start_date: '2015-03-12'
         };
     }
-}).controller('indexSettingsCtrl', function($scope, $rootScope, $cacheFactory) {
+}).controller('indexSettingsCtrl', function($scope, $rootScope, $cacheFactory, Tools) {
     var myCache = $cacheFactory.get('myCache');
     $scope.add = function() {
         $scope.indexSettings.push({
@@ -112,6 +118,9 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         localStorage.setItem('$infoSections', infoSections);
         localStorage.setItem('$index', angular.toJson($scope.indexSettings));
         $rootScope.showDialog('保存完毕');
+    };
+    $scope.init=function(){
+        Tools.communicateSP($rootScope.sPort, new Buffer('51','hex'));
     };
     $scope.indexSettings = localStorage.getItem('$index') ? angular.fromJson(localStorage.getItem('$index')) : [{
         "start": "0",

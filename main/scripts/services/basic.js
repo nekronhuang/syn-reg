@@ -89,7 +89,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                     });
                                     Tools.communicateSP(item, Buffer.concat([
                                         new Buffer([0x34]),
-                                        new Buffer($filter('date')(date, 'yyyyMMddhhmmss'), 'hex'),
+                                        new Buffer($filter('date')(date, 'yyyyMMddHHmmss'), 'hex'),
                                         new Buffer([date.getDay()])
                                     ]));
                                     setTimeout(function() {
@@ -176,6 +176,8 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                             case '3973':
                                 Advanced.s9();
                                 break;
+                            case '5173':
+                                Advanced.init();
                         }
                     }).once('error', function(err) {
                         myCache.get('sPanel').scope().error();
