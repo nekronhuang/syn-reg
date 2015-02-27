@@ -10,21 +10,22 @@
   "license": "ISC",
   "dependencies": {
     "async": "0.9.0",
-    "iconv-lite": "0.4.5",
     "serialport": "1.4.9"
   },
   "devDependencies": {
     "edge": "^0.9.3",
-    "ffi": "^1.2.7",
     "nedb": "*",
     "ref": "^0.3.2"
   },
   "window": {
-    "toolbar": true,
+    "toolbar": false,
     "icon": "./main/skins/images/brand.png",
     "position": "center",
-    "frame": true,
-    "show": true
+    "resizable": false,
+    "width": 1300,
+    "height": 700,
+    "frame": false,
+    "show": false
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

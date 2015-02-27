@@ -153,7 +153,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                 Write.c();
                                 break;
                             case '3173':
-                                Write.s(data);
+                                Write.s(buf);
                                 break;
                             case '3273':
                                 Read.s(buf);

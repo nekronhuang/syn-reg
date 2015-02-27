@@ -4,9 +4,9 @@
 </div>
 <div class="modal-body">
   <div style="margin-left:35px;">
-    <md-switch ng-model="$root.onFormat">
-        实时搜索: {{ $root.onFormat }}
-      </md-switch>
+    <md-switch ng-model="liveSearch" aria-label="liveSearch">
+      实时搜索: {{ liveSearch?'开':'关' }}
+    </md-switch>
   </div>
   <md-checkbox ng-model="item.visible" ng-disabled="item.disabled" aria-label="modifySetting" ng-repeat="item in items" class="text-left">
     {{ item.display }}

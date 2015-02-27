@@ -40,22 +40,31 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         Basic.build(item.com, item.readId);
     };
     $scope.server = angular.fromJson($window.localStorage.getItem('$server')) || {};
-    $scope.computer=$window.localStorage.getItem('$computer');
+    $scope.computer = $window.localStorage.getItem('$computer');
     $scope.testLink = function() {
         $window.localStorage.setItem('$server', angular.toJson($scope.server));
         var server = 'http://' + $scope.server.ip + ':' + $scope.server.port;
-        $http.get(server+'/link?computer='+$scope.computer, {
+        $http.get(server + '/link?computer=' + $scope.computer, {
             timeout: 1000
         }).success(function(res, status) {
-            console.log(status);
+            if (res.data) {
+                $window.localStorage.setItem('$computer', res.data);
+                $scope.computer = res.data;
+            }
+            if(status==204){
+                $window.localStorage.removeItem('$computer');
+                $scope.computer = null;
+            }
             $window.sessionStorage.setItem('$server', server);
+            $rootScope.showDialog('网络可用!');
         }).error(function() {
-            $rootScope.showDialog('连接异常');
-            $window.sessionStorage.setItem('$server', 'http://localhost:'+$scope.server.port);
+            $rootScope.showDialog('网络异常!');
         });
     };
     $scope.searchPrinter = function() {
-        Tools.communicatePrinter({method:'0'});
+        Tools.communicatePrinter({
+            method: '0'
+        });
     };
     $scope.setupPrinter = function() {
         $window.sessionStorage.setItem('$barcode', $scope.barcode);
@@ -63,9 +72,9 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         //Tools.communicatePrinter({method:'1',printname:$window.sessionStorage.getItem('$barcode')})
     };
     $scope.searchPrinter();
-    $scope.$on('fork',function(evt,msg){
-        if(msg.name){
-            $scope.printer=msg.name.split(',');
+    $scope.$on('fork', function(evt, msg) {
+        if (msg.name) {
+            $scope.printer = msg.name.split(',');
         }
     });
 }).controller('expoSettingsCtrl', function($window, $scope, $rootScope) {
@@ -77,12 +86,12 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         $scope.expoSettings = angular.fromJson($window.localStorage.getItem('$expo'));
     } else {
         $scope.expoSettings = {
-            _id:'54ed88d0faab2c1ede3a56c4',
+            _id: '54ed88d0faab2c1ede3a56c4',
             name: 'TCT ASIA',
             full_name: '亚洲3D打印、增材制造展览会 TCT亚洲峰会',
             year: '2015',
-            duration: 3,
-            start_date: '2015-03-12'
+            duration: 60,
+            start_date: '2015-02-12'
         };
     }
 }).controller('indexSettingsCtrl', function($scope, $rootScope, $cacheFactory, Tools) {
@@ -119,8 +128,8 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         localStorage.setItem('$index', angular.toJson($scope.indexSettings));
         $rootScope.showDialog('保存完毕');
     };
-    $scope.init=function(){
-        Tools.communicateSP($rootScope.sPort, new Buffer('51','hex'));
+    $scope.init = function() {
+        Tools.communicateSP($rootScope.sPort, new Buffer('51', 'hex'));
     };
     $scope.indexSettings = localStorage.getItem('$index') ? angular.fromJson(localStorage.getItem('$index')) : [{
         "start": "0",
@@ -179,5 +188,8 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
     };
     $scope.debug = function() {
         Advanced.g($scope.hex);
+    };
+    $scope.showDev=function(){
+        require('nw.gui').Window.get().showDevTools();
     };
 });

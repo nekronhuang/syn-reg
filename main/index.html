@@ -20,7 +20,7 @@
 </head>
 
 <body>
-  <div id="loading-wrap" class="hide">
+  <div id="loading-wrap">
     <div class="content">
       <div class="outer-circle"></div>
       <div class="inner-circle"></div>
@@ -144,7 +144,7 @@
         </ul>
       </div>
       <div id="center">
-        <div class="control-panel" id="wPanel" ng-show="$parent.activePanel=='wPanel'" ng-controller="wPanelCtrl">
+        <div class="control-panel" id="wPanel" ng-if="$parent.activePanel=='wPanel'" ng-controller="wPanelCtrl">
           <div class="content">
             <div class="form-inline">
               <div class="form-group">
@@ -157,40 +157,46 @@
             <form class="form-horizontal">
               <div class="form-group" id="basic-info">
                 <h2><small>基础信息：</small></h2>
-                <div class="col-sm-3 input-wrap" ng-repeat="item in input" ng-if="item.visible">
+                <script type="text/ng-template" id="nameTpl.html">
+                  <a tabindex="-1">
+                    <span bind-html-unsafe="match.model.sur| typeaheadHighlight:query"></span>
+                    <em>&nbsp;{{match.model.co}}
+                      <span class="text-success" ng-if="match.model.reg_time">&nbsp;已登记</span>
+                      <span class="text-danger" ng-if="!match.model.reg_time">&nbsp;未登记</span>
+                    </em>
+                  </a>
+                </script>
+                <div class="col-sm-4 input-wrap" ng-repeat="item in input" ng-if="item.visible">
                   <div class="row">
                     <label class="col-sm-3 control-label">{{item.display}}</label>
-                    <div class="col-sm-8" ng-switch on="item.search">
-                      <input class="form-control" ng-model="info[item.key]" ng-switch-when="all" typeahead="c as c.name for c in getNameSearch($viewValue)" typeahead-on-select='onSelectPart($item, $model, $label)' typeahead-template-url="nameSearch.html" typeahead-wait-ms="10">
-                      <input class="form-control" ng-model="info[item.key]" ng-switch-when="one" typeahead="c as c.company for c in companySearch($viewValue) | filter:$viewValue | limitTo:10">
+                    <div class="col-sm-8" ng-switch on="item.key">
+                      <input class="form-control" ng-model="info.sur" ng-switch-when="sur" typeahead="c as c.sur for c in getNameSearch($viewValue)" typeahead-template-url="nameTpl.html" typeahead-on-select="getName($item)" typeahead-wait-ms="300">
+                      <input class="form-control" ng-model="info.co" ng-switch-when="co" typeahead="c for c in getCompanySearch($viewValue) | limitTo:10" typeahead-wait-ms="300">
+                      <input class="form-control" ng-model="info.cy" ng-switch-when="cy" typeahead="c for c in states | filter:$viewValue | limitTo:10" typeahead-wait-ms="300" typeahead-min-length="3">
+                      <input class="form-control" ng-model="info.id" ng-switch-when='id' ng-change="getIdSearch(info.id)">
                       <input class="form-control" ng-model="info[item.key]" ng-switch-default>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- <div class="form-group">
-                <h2><small>登记情况：</small></h2>
-                <div class="col-sm-3" ng-repeat="item in extraInput" style="margin-bottom:15px;">
-                  <div class="row">
-                    <label class="col-sm-3 control-label">{{item.display}}</label>
-                    <div class="col-sm-8" ng-switch on="item.type">
-                      <div class="checkbox" ng-switch-when="checkbox">
-                        <input type="checkbox" ng-model="item.value">
-                      </div>
-                      <select class="form-control" ng-switch-when="select" ng-model="item.value" ng-options="i as option for (i,option) in item.options">
-                      </select>
-                      <input class="form-control" ng-model="item.value" ng-switch-when="text" disabled ng-value="item.value">
-                    </div>
-                  </div>
-                </div>
-              </div> -->
               <div class="form-group" id="qn-info">
                 <h2><small>问卷信息：</small></h2>
-                <div class="col-sm-3 input-wrap" ng-repeat="item in info.qn track by $index">
+                <div class="col-sm-4 input-wrap" ng-repeat="item in info.qn track by $index">
                   <div class="row">
                     <label class="col-sm-3 control-label">问题{{$index+1}}</label>
                     <div class="col-sm-8">
                       <input class="form-control" ng-model="info.qn[$index]">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" id="qn-info">
+                <h2><small>登记情况：</small></h2>
+                <div class="col-sm-4 input-wrap">
+                  <div class="row">
+                    <label class="col-sm-3 control-label">登记时间</label>
+                    <div class="col-sm-8">
+                      <input class="form-control" date-format ng-model="info.reg_time" disabled="true">
                     </div>
                   </div>
                 </div>
@@ -200,7 +206,7 @@
                 <label class="col-sm-2 control-label">胸牌类型：</label>
                 <div class="col-sm-8">
                   <label class="radio-inline" ng-repeat="item in reg_type.kind">
-                    <input type="radio" ng-model="reg_type.value" ng-value="item.value"> {{item.display}}
+                    <input type="radio" ng-model="reg_type.value" ng-value="$index"> {{item.display}}
                   </label>
                 </div>
               </div>
@@ -210,9 +216,9 @@
             <section class="funcbar" layout="vertical" layout-sm="horizontal" layout-align="center center">
               <md-button class="md-raised" ng-click="make();$event.stopPropagation();">制卡</md-button>
               <md-button class="md-raised" ng-click="spWrite();$event.stopPropagation();">写卡</md-button>
-              <md-button class="md-raised" ng-click="spRead()">读卡</md-button>
-              <md-button class="md-raised">打印胸卡</md-button>
-              <md-button class="md-raised">打印导览图</md-button>
+              <md-button class="md-raised" ng-click="spRead();$event.stopPropagation();">读卡</md-button>
+              <md-button class="md-raised" ng-click="printBadge();$event.stopPropagation();">打印胸卡</md-button>
+              <md-button class="md-raised" ng-click="printGuide();$event.stopPropagation();">打印导览图</md-button>
             </section>
             <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
               <md-button class="md-fab" ng-click="countLogs()" aria-label="countLogs" tooltip="统计">
@@ -230,7 +236,7 @@
             </section>
           </footer>
         </div>
-        <div class="control-panel" id="rPanel" ng-show="$parent.activePanel=='rPanel'" ng-controller="rPanelCtrl">
+        <div class="control-panel" id="rPanel" ng-if="$parent.activePanel=='rPanel'" ng-controller="rPanelCtrl">
           <div class="content">
             <div class="form-inline">
               <div class="form-group">

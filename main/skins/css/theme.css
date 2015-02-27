@@ -389,6 +389,7 @@ header.navbar .navbar-nav li a {
     bottom: 50px;
     left: 0;
     right: 0;
+    overflow-x: hidden;
     overflow-y: auto;
 }
 #center .control-panel .form-horizontal > .form-group {
@@ -441,7 +442,7 @@ header.navbar .navbar-nav li a {
     height: 32px;
     background: #fff;
     color: #444444;
-    margin: 0 15px;
+    margin: 0 8px;
 }
 #main .control-panel footer .md-fab button {
     color: #444;

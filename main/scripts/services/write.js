@@ -2,7 +2,6 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
     var async = require('async'),
         doc;
     this.g = function(input, type) {
-        console.log(input)
         doc = input;
         doc.reg_type = type;
         doc.reg_time = Date.now();
@@ -20,13 +19,13 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
         }
         Tools.communicateSP($rootScope.sPort, Tools.indexInit());
     };
-    this.s = function(data) {
-        var str = data.substring(2, 16);
+    this.s = function(buf) {
+        var str = buf.toString('utf8',2);
         doc.cardid = str.toUpperCase();
-        // parseInt(str, 16)
         Tools.showLog('写入完成...');
         async.parallel([
             function(next) {
+                console.log(doc);
                 DB.logs.update({
                     cardid: doc.cardid
                 }, {
@@ -39,7 +38,9 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
                 var link = $window.sessionStorage.getItem('$server') + '/update?computer=' + $window.localStorage.getItem('$computer');
                 $http.post(link, doc, {
                     timeout: 1000
-                }).success(next).error(next);
+                }).success(function(){
+                    next();
+                }).error(next);
             }
         ], function(err) {
             if (err) console.error(err);

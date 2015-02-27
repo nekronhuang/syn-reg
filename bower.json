@@ -17,12 +17,11 @@
   "dependencies": {
     "jquery": "2.1.3",
     "angular": "1.3.8",
-    "bootstrap": "3.3.1",
+    "bootstrap": "3.3.2",
     "icomoon": "~0.0.3",
     "angular-bootstrap": "~0.12.0"
   },
   "devDependencies": {
-    "angular-material": "master",
-    "jquery.nicescroll": "master"
+    "angular-material": "master"
   }
 }
