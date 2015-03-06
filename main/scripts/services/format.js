@@ -8,6 +8,7 @@ angular.module('service.format', ['service.tools']).service('Format', function($
             alert('放卡');
             Tools.communicateSP($rootScope.sPort, Tools.indexInit());
         } else {
+            return
             angular.element('#wPanel').scope().spWrite();
         }
     }

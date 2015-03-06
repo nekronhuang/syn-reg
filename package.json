@@ -10,22 +10,21 @@
   "license": "ISC",
   "dependencies": {
     "async": "0.9.0",
-    "serialport": "1.4.9"
-  },
-  "devDependencies": {
-    "edge": "^0.9.3",
-    "nedb": "*",
-    "ref": "^0.3.2"
+    "edge": "^0.10.0",
+    "iconv-lite": "^0.4.7",
+    "nedb": "^1.1.1",
+    "serialport": "^1.6.1",
+    "ffi": "git+https://github.com/kjunichi/node-ffi.git#bad796888ad564bbc6a15b73579223b8f118605e"
   },
   "window": {
-    "toolbar": false,
+    "toolbar": true,
     "icon": "./main/skins/images/brand.png",
     "position": "center",
     "resizable": false,
     "width": 1300,
     "height": 700,
     "frame": false,
-    "show": false
+    "show": true
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

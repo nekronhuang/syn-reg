@@ -12,14 +12,19 @@ angular.module('controller.rPanel', ['service.tools', 'service.import', 'service
     $scope.spExport = function() {
         Export.g();
     };
-    $scope.indexSearch = function() {
-        $http.get('http://localhost:8888/exhibitors/' + $scope.keyWord.toUpperCase(), {
+    $scope.indexSearch = function(val) {
+        var key;
+        if (val) {
+            key = val;
+        } else {
+            key = $scope.keyWord.toUpperCase();
+        }
+        $http.get($window.sessionStorage.getItem('$server') + '/exhibitors/' + key, {
             timeout: 1000
         }).success(function(res) {
             $scope.info = res.data;
-            console.log(res);
         }).error(function() {
-            $rootScope.showDialog('请先导入展商名单!');
+            $rootScope.showDialog('网络异常!');
         });
     };
     $scope.prevSearch = function() {
@@ -27,16 +32,47 @@ angular.module('controller.rPanel', ['service.tools', 'service.import', 'service
         if (nowKeyWord > 0) {
             $scope.keyWord = nowKeyWord - 1;
         }
-        $scope.indexSearch();
+        $scope.indexSearch($scope.keyWord);
     };
     $scope.nextSearch = function() {
         var nowKeyWord = $scope.keyWord ? parseInt($scope.keyWord) : 0;
         $scope.keyWord = nowKeyWord + 1;
-        $scope.indexSearch();
+        $scope.indexSearch($scope.keyWord);
     };
     $scope.clearAll = function() {
         $scope.info = {};
     };
+// var ffi = require('ffi'),
+//     ref = require('ref'),
+//     RC = ffi.Library('dll_camera.dll', {
+//         GetDevice: ['int', []],
+//         StartDevice: ['bool', []],
+//         ReleaseDevice: ['void', []],
+//         ReleaseLostDevice: ['void', []],
+//         SetBeep: ['void', ['bool']],
+//         SetBeepTime: ['void', ['int']],
+//         setQRable: ['void', ['bool']],
+//         GetDecodeString: ['void', ['char *']]
+//     });
+
+// RC.ReleaseDevice();
+// RC.StartDevice();
+// RC.SetBeepTime(100);
+// RC.setQRable(true);
+
+// var buf = new Buffer(100),
+//     loop;
+// buf.type = ref.types.CString;
+// loop = setInterval(function() {
+//     console.log('check');
+//     RC.GetDecodeString(buf);
+//     if (ref.readCString(buf, 0)) {
+//         // RC.setQRable(false);
+//         // clearInterval(loop);
+//         console.log(buf);
+//         console.log(ref.readCString(buf, 0))
+//     }
+// }, 50);
 }).service('readerInput', function() {
     this.infoInput = [{
         key: '_id',

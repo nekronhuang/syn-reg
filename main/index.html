@@ -144,7 +144,7 @@
         </ul>
       </div>
       <div id="center">
-        <div class="control-panel" id="wPanel" ng-if="$parent.activePanel=='wPanel'" ng-controller="wPanelCtrl">
+        <div class="control-panel" id="wPanel" ng-show="$parent.activePanel=='wPanel'" ng-controller="wPanelCtrl">
           <div class="content">
             <div class="form-inline">
               <div class="form-group">
@@ -190,7 +190,13 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group" id="qn-info">
+              <div class="form-group">
+                <h2><small>权限设置：</small></h2>
+                <md-checkbox md-no-ink ng-model="info.auth[$index]" aria-label="auth" ng-repeat="item in authInput" class="md-primary" ng-true-value="'{{item.value}}'" ng-false-value="'00000000'">
+                  {{ item.display }}
+                </md-checkbox>
+              </div>
+              <div class="form-group">
                 <h2><small>登记情况：</small></h2>
                 <div class="col-sm-4 input-wrap">
                   <div class="row">

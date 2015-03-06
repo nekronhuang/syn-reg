@@ -43,6 +43,9 @@ a:hover {
     border-color: #2598f9;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
 }
+md-checkbox{
+    display: inline-block;
+}
 .btn {
     border-color: #CCCCCC;
     border-radius: 0;
@@ -142,7 +145,6 @@ a:hover {
     display: inline;
 }
 .modal-content .modal-body md-checkbox{
-    display: inline-block;
     width: 100px;
 }
 .modal-content .modal-footer {

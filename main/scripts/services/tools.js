@@ -1,24 +1,27 @@
-angular.module('service.tools', []).service('Tools', function($rootScope, $cacheFactory) {
-    var myCache = $cacheFactory.get('myCache'),
-        self=this;
+angular.module('service.tools', []).service('Tools', function($window, $rootScope, $cacheFactory) {
+    var myCache = $cacheFactory.get('myCache');
     this.showLog = function(msg) {
         myCache.get('cPanel').scope().add({
             date: Date.now(),
             msg: msg
         });
     };
-    this.communicateSP = function(port, value) {
+    this.communicateSP = function(port, value, callback) {
         if (port) {
             var x = value.length,
                 y = -x,
                 v = Buffer.concat([new Buffer([0x23, x >> 8, x, y >>> 0 >> 8, y >>> 0]), value, new Buffer([0x25])]);
+            console.debug('communicate:', v.toString('hex'));
             port.write(v, function(err) {
                 if (err) return console.error('write', err);
+                if (callback) callback();
             });
         } else {
             $rootScope.showDialog('未连接!');
             if ($rootScope.activePanel != 'sPanel') {
                 $rootScope.activePanel = 'sPanel';
+                myCache.get('sPanel').scope().active = 0;
+            } else {
                 myCache.get('sPanel').scope().active = 0;
             }
         }
@@ -38,7 +41,6 @@ angular.module('service.tools', []).service('Tools', function($rootScope, $cache
                 fnArray[3] = parseInt(item.keyA + item.keyB, 2);
                 initArray.push(fnArray);
             }
-            //default 12 + 0x35
             for (var i = 0, len = 13 - initArray.length; i < len; i++) {
                 initArray.push([255, 255, 0, 0]);
             }
@@ -48,21 +50,18 @@ angular.module('service.tools', []).service('Tools', function($rootScope, $cache
         }
         return myCache.get('indexInit');
     };
-    this.renderData = function(obj, arr) {
-        for (var i = 0, len = arr.length; i < len; i++) {
-            var item = arr[i];
-            if (obj[item.key]) {
-                item.value = obj[item.key];
-            }
-        }
-    };
     var fork = require('child_process').fork,
-        printer = fork(path.dirname(process.execPath) + '/main/scripts/workers/printer.js');
-    printer.on('message', function(msg) {
-        $rootScope.$broadcast('fork',msg);
+        barcode = fork(path.dirname(process.execPath) + '/main/scripts/workers/barcode.js'),
+        laser = fork(path.dirname(process.execPath) + '/main/scripts/workers/laser.js');
+    barcode.on('message', function(msg) {
+        $rootScope.$broadcast('fork', msg);
     });
-    this.communicatePrinter=function(para){
-        console.debug('para:',para);
-        printer.send(para);
+    this.communicateBarcode = function(para) {
+        console.debug('para:', para);
+        barcode.send(para);
+    };
+    this.communicateLaser = function(para) {
+        console.debug('para:', para);
+        laser.send(para);
     };
 });

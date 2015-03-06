@@ -1,9 +1,5 @@
-var path = require('path');
-angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $filter, $http, $modal, Tools, Write, Read, writerInput, DB) {
+angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $timeout, $filter, $http, $modal, Tools, Write, Read, writerInput, DB) {
     var async = require('async');
-    $scope.info = {
-        qn: new Array(7)
-    };
     $scope.states = writerInput.states;
     $scope.getIdSearch = function(val) {
         if (val && val.length == 10) {
@@ -11,6 +7,11 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 timeout: 1000
             }).success(function(res, status) {
                 if (status == 204) {
+                    $scope.info.sur= '';
+                    $scope.info.fir= '';
+                    $scope.info.co= '';
+                    $scope.info.pos= '';
+                    $scope.info.qn=[0,0,0,0,0];
                     return $rootScope.showDialog('已登记!');
                 }
                 if (res.data) {
@@ -64,19 +65,43 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         $scope.input = writerInput.infoInput;
     }
     $scope.reg_type = writerInput.reg_type;
+    $scope.authInput = writerInput.authInput;
+    $scope.info = {
+        sur: '',
+        fir: '',
+        co: '',
+        pos: '',
+        qn: [0, 0, 0, 0, 0],
+        auth:new Array($scope.authInput.length)
+    };
     $scope.clearAll = function() {
         $scope.info = {
-            qn: new Array(7)
+            sur: '',
+            fir: '',
+            co: '',
+            pos: '',
+            qn: [0, 0, 0, 0, 0],
+            auth:new Array($scope.authInput.length)
         };
         if (!$scope.$$phase) {
             $scope.$digest();
         }
     };
     $scope.spWrite = function() {
-        Write.g($scope.info, $scope.reg_type.value);
+        Write.g($scope.info, {
+            reg_type: $scope.reg_type.value,
+        });
     };
     $scope.spRead = function() {
         Read.g();
+    };
+    $scope.spAuth=function(){
+        for (var i = 0, len = $scope.info.auth.length; i < len; i++) {
+            if ($scope.info.auth[i]) {
+                Tools.communicateSP($rootScope.sPort, new Buffer('430f', 'hex'));
+                break;
+            }
+        }
     };
     $scope.printBadge = function() {
         var para = {
@@ -85,7 +110,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             page_w: '373',
             page_h: '353',
             content: {
-                origin_h: '160',
+                origin_h: '150',
                 content_num: '0',
                 content_core: []
             }
@@ -93,42 +118,60 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         switch ($scope.reg_type.value) {
             case 0:
                 para.content.content_core.push({
-                    text: ($scope.info.sur + $scope.info.fir) || '参会代表',
+                    text: ($scope.info.sur + ' ' + $scope.info.fir).trim() || '参会代表',
                     size: '40',
                     style: '1',
-                    space: '0',
+                    space: '8',
                     special: '0'
                 });
                 para.content.content_core.push({
                     text: $scope.info.pos || '',
                     size: '14',
                     style: '0',
-                    space: '8',
+                    space: '0',
                     special: '0'
                 });
                 para.content.content_core.push({
                     text: $scope.info.co || '',
                     size: '14',
                     style: '0',
-                    space: '0',
+                    space: '8',
                     special: '0'
                 });
-                //仅限
+                var arr = ['仅限3月12日 / 12th March Only', '仅限3月13日 / 13th March Only'],
+                    temp = [];
+                for (var i = 0, len = $scope.info.auth.length; i < len; i++) {
+                    if ($scope.info.auth[i] && $scope.info.auth[i] != '00000000') {
+                        temp.push(arr[i]);
+                    }
+                }
+                if (temp.length == 1) {
+                    para.content.content_core.push({
+                        text: temp[0],
+                        size: '7',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                }
+                if (temp.length == 0) {
+                    return $rootScope.showDialog('未选择权限!');
+                }
                 para.content.content_num = String(para.content.content_core.length);
                 break;
             case 1:
                 para.content.content_core.push({
-                    text: ($scope.info.sur + $scope.info.fir) || '现场观众',
+                    text: ($scope.info.sur + ' ' + $scope.info.fir).trim() || '现场观众',
                     size: '40',
                     style: '1',
-                    space: '0',
+                    space: '8',
                     special: '0'
                 });
                 para.content.content_core.push({
                     text: $scope.info.pos || '',
                     size: '14',
                     style: '0',
-                    space: '8',
+                    space: '0',
                     special: '0'
                 });
                 para.content.content_core.push({
@@ -144,17 +187,17 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             case 3:
             case 4:
                 para.content.content_core.push({
-                    text: ($scope.info.sur + $scope.info.fir) || $scope.reg_type.kind[$scope.reg_type.value].display,
+                    text: ($scope.info.sur + ' ' + $scope.info.fir).trim() || $scope.reg_type.kind[$scope.reg_type.value].display,
                     size: '40',
                     style: '1',
-                    space: '0',
+                    space: '8',
                     special: '0'
                 });
                 para.content.content_core.push({
                     text: $scope.info.pos || '',
                     size: '14',
                     style: '0',
-                    space: '8',
+                    space: '0',
                     special: '0'
                 });
                 para.content.content_core.push({
@@ -175,7 +218,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 break;
             case 5:
                 para.content.content_core.push({
-                    text: '媒体',
+                    text: '媒 体',
                     size: '40',
                     style: '1',
                     space: '0',
@@ -185,21 +228,21 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     text: 'Media',
                     size: '30',
                     style: '1',
-                    space: '0',
+                    space: '15',
                     special: '0'
                 });
                 para.content.content_core.push({
                     text: $scope.info.co || '',
                     size: '12',
                     style: '0',
-                    space: '21',
+                    space: '0',
                     special: '0'
                 });
                 para.content.content_num = '3';
                 break;
             case 6:
                 para.content.content_core.push({
-                    text: '展商',
+                    text: '展 商',
                     size: '40',
                     style: '1',
                     space: '0',
@@ -209,14 +252,14 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     text: 'Exhibitor',
                     size: '30',
                     style: '1',
-                    space: '0',
+                    space: '10',
                     special: '0'
                 });
                 para.content.content_core.push({
                     text: $scope.info.co || '',
                     size: '12',
                     style: '0',
-                    space: '15',
+                    space: '0',
                     special: '0'
                 });
                 //展位号填写在名字中
@@ -247,20 +290,21 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 para.content.content_num = '2';
                 break;
             case 8:
+                para.content.origin_h = '169';
                 para.content.content_core.push({
                     text: '工作证',
                     size: '40',
                     style: '1',
-                    space: '19',
+                    space: '0',
                     special: '0'
                 });
                 para.content.content_num = '1';
                 break;
         }
-        Tools.communicatePrinter(para);
+        Tools.communicateBarcode(para);
     };
     $scope.printGuide = function() {
-
+        Tools.communicateLaser({});
     };
     $scope.make = function() {
         $scope.spWrite();
@@ -304,13 +348,12 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     results: res
                 })
             });
-            console.log(res, modalInstance);
         });
     };
     $scope.startWorldCard = function() {
         $rootScope.showDialog('未启用!');
     };
-    $scope.liveSearch = true;
+    $scope.liveSearch = $window.localStorage.getItem('$liveSearch') ? false : true;
     $scope.modifySetting = function() {
         var modalInstance = $modal.open({
             templateUrl: './views/modifyItems.html',
@@ -327,16 +370,17 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             }
         });
         modalInstance.result.then(function(obj) {
-            console.log(obj);
             $window.localStorage.setItem('$input', angular.toJson(obj.items));
+            if (obj.liveSearch) {
+                $window.localStorage.removeItem('$liveSearch');
+            } else {
+                $window.localStorage.setItem('$liveSearch', 'off');
+            }
             $scope.input = obj.items;
             $scope.liveSearch = obj.liveSearch;
-        }, function() {
-
         });
     };
     $scope.render = function(data) {
-        console.log(data);
         try {
             var output = angular.fromJson(data);
             $scope.info = output;
@@ -345,11 +389,10 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             console.error('not json');
         }
     };
+
     $document.keyup(function(evt) {
-        evt.stopPropagation();
         var $basicInfo = angular.element('#basic-info .input-wrap'),
             $qnInfo = angular.element('#qn-info .input-wrap');
-        // console.log(evt);
         switch (evt.keyCode) {
             case 83: //ctrl+s
                 if (evt.ctrlKey) {
@@ -357,24 +400,15 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }
                 break;
             case 49: //1
-                if (evt.altKey) {
-                    $qnInfo.eq(0).find('input').focus();
-                } else if (evt.ctrlKey) {
-                    $basicInfo.eq(0).find('input').focus();
-                }
-                break;
             case 50: //2
+            case 51:
+            case 52:
+            case 53:
+            case 54:
                 if (evt.altKey) {
-                    $qnInfo.eq(1).find('input').focus();
+                    $qnInfo.eq(evt.keyCode - 49).find('input').focus();
                 } else if (evt.ctrlKey) {
-                    $basicInfo.eq(1).find('input').focus();
-                }
-                break;
-            case 51: //3
-                if (evt.altKey) {
-                    $qnInfo.eq(2).find('input').focus();
-                } else if (evt.ctrlKey) {
-                    $basicInfo.eq(2).find('input').focus();
+                    $basicInfo.eq(evt.keyCode - 49).find('input').focus();
                 }
                 break;
             case 112: //F1
@@ -382,6 +416,12 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 break;
             case 113: //F2
                 $scope.spRead();
+                break;
+            case 114:
+                $scope.printBadge();
+                break;
+            case 115:
+                $scope.printGuide();
                 break;
             case 120: //F9
                 $scope.clearAll();
@@ -391,9 +431,9 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 break;
         }
     });
-    $scope.$on('$destroy', function() {
-        $document.off('keyup');
-    });
+    // $scope.$on('$destroy', function() {
+    //     $document.off('keyup');
+    // });
 }).controller('modifySettingCtrl', function($scope, $modalInstance, items, liveSearch) {
     $scope.items = angular.copy(items);
     $scope.liveSearch = liveSearch;
@@ -472,6 +512,13 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         display: 'QQ',
         visible: false
     }];
+    this.authInput = [{
+        display: '3月12日会议',
+        value: '00000111'
+    }, {
+        display: '3月13日会议',
+        value: '00001111'
+    }, ];
     this.reg_type = {
         kind: [{
             display: '参会代表',

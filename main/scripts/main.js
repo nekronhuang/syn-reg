@@ -11,22 +11,21 @@ angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 
             duration: 1000,
             position: 'top right'
         });
-    }
-    $window.onbeforeunload = function(event) {
-        if ($rootScope.sPort) $rootScope.sPort.close(function() {});
-    }
-    // iconv.extendNodeEncodings();
+    };
     var myCache = $cacheFactory('myCache');
+    myCache.put('wPanel', angular.element('#wPanel'));
     myCache.put('sPanel', angular.element('#sPanel'));
     myCache.put('cPanel', angular.element('#cPanel'));
     $rootScope.sPort = null;
     $rootScope.onFormat = false;
-    $rootScope.activePanel = 'wPanel';
+    $rootScope.activePanel = 'sPanel';
     var win = gui.Window.get();
     win.show();
-    $timeout(function() {
-        angular.element('#loading-wrap').addClass('loaded');
-    }, 2000);
+    $rootScope.$on('ready',function(){
+        $timeout(function() {
+            angular.element('#loading-wrap').addClass('loaded');
+        }, 1000);
+    });
 }).controller('headerCtrl', function($rootScope, $scope) {
     $scope.isKeyShown = false;
     $scope.toggleKeyShown = function() {
@@ -39,7 +38,7 @@ angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 
         gui.Window.get().minimize();
     };
     $scope.close = function() {
-        gui.App.quit();
+        gui.App.closeAllWindows();
     };
     $scope.isKiosk = false;
     $scope.toggleMaximize = function() {

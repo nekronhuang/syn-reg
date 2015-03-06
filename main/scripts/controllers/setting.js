@@ -15,6 +15,7 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
     $scope.list = function(e) {
         e.preventDefault();
         e.stopPropagation();
+        $scope.spCheck.visible = false;
         $scope.spCheck.text = '扫描中...';
         if (!$scope.spCheck.visible) {
             Basic.list(function(err, results) {
@@ -51,7 +52,7 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
                 $window.localStorage.setItem('$computer', res.data);
                 $scope.computer = res.data;
             }
-            if(status==204){
+            if (status == 204) {
                 $window.localStorage.removeItem('$computer');
                 $scope.computer = null;
             }
@@ -62,20 +63,21 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         });
     };
     $scope.searchPrinter = function() {
-        Tools.communicatePrinter({
+        Tools.communicateBarcode({
             method: '0'
         });
     };
     $scope.setupPrinter = function() {
         $window.sessionStorage.setItem('$barcode', $scope.barcode);
         $window.sessionStorage.setItem('$laser', $scope.laser);
-        //Tools.communicatePrinter({method:'1',printname:$window.sessionStorage.getItem('$barcode')})
+        $rootScope.showDialog('保存完毕!');
     };
     $scope.searchPrinter();
     $scope.$on('fork', function(evt, msg) {
         if (msg.name) {
             $scope.printer = msg.name.split(',');
         }
+        $scope.$emit('ready');
     });
 }).controller('expoSettingsCtrl', function($window, $scope, $rootScope) {
     $scope.save = function() {
@@ -189,7 +191,7 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
     $scope.debug = function() {
         Advanced.g($scope.hex);
     };
-    $scope.showDev=function(){
+    $scope.showDev = function() {
         require('nw.gui').Window.get().showDevTools();
     };
 });
