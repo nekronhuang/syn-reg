@@ -51,17 +51,22 @@ angular.module('service.tools', []).service('Tools', function($window, $rootScop
         return myCache.get('indexInit');
     };
     var fork = require('child_process').fork,
+        rc = fork(path.dirname(process.execPath) + '/main/scripts/workers/rc.js'),
         barcode = fork(path.dirname(process.execPath) + '/main/scripts/workers/barcode.js'),
         laser = fork(path.dirname(process.execPath) + '/main/scripts/workers/laser.js');
     barcode.on('message', function(msg) {
         $rootScope.$broadcast('fork', msg);
     });
+    rc.on('message', function(msg) {
+        $rootScope.$broadcast('rc', msg);
+    });
+    this.communicateRC = function(para){
+        rc.send(para);
+    };
     this.communicateBarcode = function(para) {
-        console.debug('para:', para);
         barcode.send(para);
     };
     this.communicateLaser = function(para) {
-        console.debug('para:', para);
         laser.send(para);
     };
 });

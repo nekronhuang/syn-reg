@@ -17,14 +17,14 @@
     "ffi": "git+https://github.com/kjunichi/node-ffi.git#bad796888ad564bbc6a15b73579223b8f118605e"
   },
   "window": {
-    "toolbar": true,
+    "toolbar": false,
     "icon": "./main/skins/images/brand.png",
     "position": "center",
     "resizable": false,
     "width": 1300,
     "height": 700,
     "frame": false,
-    "show": true
+    "show": false
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

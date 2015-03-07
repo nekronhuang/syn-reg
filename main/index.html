@@ -150,8 +150,8 @@
               <div class="form-group">
                 <input type="text" class="form-control" ng-model="searchInput">
               </div>
-              <button type="submit" class="btn btn-primary">索引</button>
-              <button type="submit" class="btn btn-primary">网络</button>
+              <button type="submit" class="btn btn-primary" ng-click="pre()">索引</button>
+              <button type="submit" class="btn btn-primary" ng-click="preNext()">网络</button>
               <button type="submit" class="btn btn-primary" title="只支持本地数据库" ng-click="fuzzySearch()">模糊</button>
             </div>
             <form class="form-horizontal">
@@ -230,8 +230,8 @@
               <md-button class="md-fab" ng-click="countLogs()" aria-label="countLogs" tooltip="统计">
                 <i class="icon icon-stats"></i>
               </md-button>
-              <md-button class="md-fab" ng-click="startWorldCard()" aria-label="startWorldCard" tooltip="启动名片识别">
-                <i class="icon icon-newspaper"></i>
+              <md-button class="md-fab" ng-click="startWorldCard()" aria-label="startWorldCard" tooltip="启动二维码识别">
+                <i class="icon icon-qrcode"></i>
               </md-button>
               <md-button class="md-fab" ng-click="modifySetting()" aria-label="settings" tooltip="设置输入项">
                 <i class="icon icon-cog"></i>

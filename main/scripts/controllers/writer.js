@@ -1,21 +1,40 @@
 angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $timeout, $filter, $http, $modal, Tools, Write, Read, writerInput, DB) {
     var async = require('async');
     $scope.states = writerInput.states;
+    $scope.pre = function() {
+        $http.get($window.sessionStorage.getItem('$server') + '/find/single?filter[id]=' + $scope.searchInput, {
+            timeout: 1000
+        }).success(function(res, status) {
+            if (res.data) {
+                $scope.info = res.data;
+                $scope.reg_type.value = res.data.reg_type;
+            } else {
+                $rootScope.showDialog('无匹配!');
+            }
+        }).error(function() {
+            $rootScope.showDialog('网络异常!');
+        });
+    };
+    $scope.preNext = function() {
+        $scope.searchInput = (parseInt($scope.searchInput) + 1).toString();
+        $scope.pre();
+    };
     $scope.getIdSearch = function(val) {
         if (val && val.length == 10) {
             $http.get($window.sessionStorage.getItem('$server') + '/find/single?filter[id]=' + val, {
                 timeout: 1000
             }).success(function(res, status) {
                 if (status == 204) {
-                    $scope.info.sur= '';
-                    $scope.info.fir= '';
-                    $scope.info.co= '';
-                    $scope.info.pos= '';
-                    $scope.info.qn=[0,0,0,0,0];
+                    $scope.info.sur = '';
+                    $scope.info.fir = '';
+                    $scope.info.co = '';
+                    $scope.info.pos = '';
+                    $scope.info.qn = [0, 0, 0, 0, 0];
                     return $rootScope.showDialog('已登记!');
                 }
                 if (res.data) {
                     $scope.info = res.data;
+                    $scope.reg_type.value = res.data.reg_type;
                 } else {
                     $rootScope.showDialog('无匹配!');
                 }
@@ -72,7 +91,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         co: '',
         pos: '',
         qn: [0, 0, 0, 0, 0],
-        auth:new Array($scope.authInput.length)
+        auth: new Array($scope.authInput.length)
     };
     $scope.clearAll = function() {
         $scope.info = {
@@ -81,7 +100,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             co: '',
             pos: '',
             qn: [0, 0, 0, 0, 0],
-            auth:new Array($scope.authInput.length)
+            auth: new Array($scope.authInput.length)
         };
         if (!$scope.$$phase) {
             $scope.$digest();
@@ -95,7 +114,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
     $scope.spRead = function() {
         Read.g();
     };
-    $scope.spAuth=function(){
+    $scope.spAuth = function() {
         for (var i = 0, len = $scope.info.auth.length; i < len; i++) {
             if ($scope.info.auth[i]) {
                 Tools.communicateSP($rootScope.sPort, new Buffer('430f', 'hex'));
@@ -117,27 +136,69 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         };
         switch ($scope.reg_type.value) {
             case 0:
-                para.content.content_core.push({
-                    text: ($scope.info.sur + ' ' + $scope.info.fir).trim() || '参会代表',
-                    size: '40',
-                    style: '1',
-                    space: '8',
-                    special: '0'
-                });
-                para.content.content_core.push({
-                    text: $scope.info.pos || '',
-                    size: '14',
-                    style: '0',
-                    space: '0',
-                    special: '0'
-                });
-                para.content.content_core.push({
-                    text: $scope.info.co || '',
-                    size: '14',
-                    style: '0',
-                    space: '8',
-                    special: '0'
-                });
+                var name = ($scope.info.sur + ' ' + $scope.info.fir).trim() || '参会代表',
+                    position = $scope.info.pos || '',
+                    company = $scope.info.co || '';
+                if (name.length > 6) {
+                    if (name.length > 12 && name.length < 17) {
+                        para.content.content_core.push({
+                            text: name,
+                            size: '25',
+                            style: '1',
+                            space: '8',
+                            special: '0'
+                        });
+                    } else if (name.length < 13) {
+                        para.content.content_core.push({
+                            text: name,
+                            size: '30',
+                            style: '1',
+                            space: '8',
+                            special: '0'
+                        });
+                    } else {
+                        return $rootScope.showDialog('名字太长无法打印!');
+                    }
+                } else {
+                    para.content.content_core.push({
+                        text: name,
+                        size: '40',
+                        style: '1',
+                        space: '8',
+                        special: '0'
+                    });
+                }
+                if(/[\u4e00-\u9fa5]/.test(position)){
+                    para.content.content_core.push({
+                        text: position,
+                        size: position.length > 17 ? '10' : '14',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                    para.content.content_core.push({
+                        text: company,
+                        size: company.length > 17 ? '10' : '14',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                }else{
+                    para.content.content_core.push({
+                        text: position,
+                        size: position.length > 36 ? '10' : '12',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                    para.content.content_core.push({
+                        text: company,
+                        size: company.length > 36 ? '10' : '12',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                }
                 var arr = ['仅限3月12日 / 12th March Only', '仅限3月13日 / 13th March Only'],
                     temp = [];
                 for (var i = 0, len = $scope.info.auth.length; i < len; i++) {
@@ -160,53 +221,137 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 para.content.content_num = String(para.content.content_core.length);
                 break;
             case 1:
-                para.content.content_core.push({
-                    text: ($scope.info.sur + ' ' + $scope.info.fir).trim() || '现场观众',
-                    size: '40',
-                    style: '1',
-                    space: '8',
-                    special: '0'
-                });
-                para.content.content_core.push({
-                    text: $scope.info.pos || '',
-                    size: '14',
-                    style: '0',
-                    space: '0',
-                    special: '0'
-                });
-                para.content.content_core.push({
-                    text: $scope.info.co || '',
-                    size: '14',
-                    style: '0',
-                    space: '0',
-                    special: '0'
-                });
+                var name = ($scope.info.sur + ' ' + $scope.info.fir).trim() || '现场观众',
+                    position = $scope.info.pos || '',
+                    company = $scope.info.co || '';
+                if (name.length > 6) {
+                    if (name.length > 12 && name.length < 17) {
+                        para.content.content_core.push({
+                            text: name,
+                            size: '25',
+                            style: '1',
+                            space: '8',
+                            special: '0'
+                        });
+                    } else if (name.length < 13) {
+                        para.content.content_core.push({
+                            text: name,
+                            size: '30',
+                            style: '1',
+                            space: '8',
+                            special: '0'
+                        });
+                    } else {
+                        return $rootScope.showDialog('名字太长无法打印!');
+                    }
+                } else {
+                    para.content.content_core.push({
+                        text: name,
+                        size: '40',
+                        style: '1',
+                        space: '8',
+                        special: '0'
+                    });
+                }
+                if(/[\u4e00-\u9fa5]/.test(position)){
+                    para.content.content_core.push({
+                        text: position,
+                        size: position.length > 17 ? '10' : '14',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                    para.content.content_core.push({
+                        text: company,
+                        size: company.length > 17 ? '10' : '14',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                }else{
+                    para.content.content_core.push({
+                        text: position,
+                        size: position.length > 36 ? '10' : '12',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                    para.content.content_core.push({
+                        text: company,
+                        size: company.length > 36 ? '10' : '12',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                }
                 para.content.content_num = String(para.content.content_core.length);
                 break;
             case 2:
             case 3:
             case 4:
-                para.content.content_core.push({
-                    text: ($scope.info.sur + ' ' + $scope.info.fir).trim() || $scope.reg_type.kind[$scope.reg_type.value].display,
-                    size: '40',
-                    style: '1',
-                    space: '8',
-                    special: '0'
-                });
-                para.content.content_core.push({
-                    text: $scope.info.pos || '',
-                    size: '14',
-                    style: '0',
-                    space: '0',
-                    special: '0'
-                });
-                para.content.content_core.push({
-                    text: $scope.info.co || '',
-                    size: '14',
-                    style: '0',
-                    space: '0',
-                    special: '0'
-                });
+                var name = ($scope.info.sur + ' ' + $scope.info.fir).trim() || $scope.reg_type.kind[$scope.reg_type.value].display,
+                    position = $scope.info.pos || '',
+                    company = $scope.info.co || '';
+                if (name.length > 6) {
+                    if (name.length > 12 && name.length < 17) {
+                        para.content.content_core.push({
+                            text: name,
+                            size: '25',
+                            style: '1',
+                            space: '8',
+                            special: '0'
+                        });
+                    } else if (name.length < 13) {
+                        para.content.content_core.push({
+                            text: name,
+                            size: '30',
+                            style: '1',
+                            space: '8',
+                            special: '0'
+                        });
+                    } else {
+                        return $rootScope.showDialog('名字太长无法打印!');
+                    }
+                } else {
+                    para.content.content_core.push({
+                        text: name,
+                        size: '40',
+                        style: '1',
+                        space: '8',
+                        special: '0'
+                    });
+                }
+                if(/[\u4e00-\u9fa5]/.test(position)){
+                    para.content.content_core.push({
+                        text: position,
+                        size: position.length > 17 ? '10' : '14',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                    para.content.content_core.push({
+                        text: company,
+                        size: company.length > 17 ? '10' : '14',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                }else{
+                    para.content.content_core.push({
+                        text: position,
+                        size: position.length > 36 ? '10' : '12',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                    para.content.content_core.push({
+                        text: company,
+                        size: company.length > 36 ? '10' : '12',
+                        style: '0',
+                        space: '0',
+                        special: '0'
+                    });
+                }
                 para.content.content_core.push({
                     text: $scope.reg_type.kind[$scope.reg_type.value].footer,
                     size: '14',
@@ -351,7 +496,10 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         });
     };
     $scope.startWorldCard = function() {
-        $rootScope.showDialog('未启用!');
+        Tools.communicateRC({
+            type: 1
+        });
+        // $rootScope.showDialog('未启用!');
     };
     $scope.liveSearch = $window.localStorage.getItem('$liveSearch') ? false : true;
     $scope.modifySetting = function() {
@@ -423,6 +571,11 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             case 115:
                 $scope.printGuide();
                 break;
+            case 118:
+                Tools.communicateRC({
+                    type: 2
+                });
+                break;
             case 120: //F9
                 $scope.clearAll();
                 break;
@@ -431,9 +584,12 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 break;
         }
     });
-    // $scope.$on('$destroy', function() {
-    //     $document.off('keyup');
-    // });
+    $scope.$on('rc', function(evt, msg) {
+        if (msg.content) {
+            $scope.info.id = msg.content;
+            $scope.$digest();
+        }
+    });
 }).controller('modifySettingCtrl', function($scope, $modalInstance, items, liveSearch) {
     $scope.items = angular.copy(items);
     $scope.liveSearch = liveSearch;
