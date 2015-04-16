@@ -34,7 +34,7 @@ angular.module('service.export', ['service.tools']).service('Export', function($
             var start = fragment * i + 2,
                 str = '';
             str += buf.toString('hex', start, start + 7) + ','; //cardid
-            str += buf.toString('hex', start + 8, start + 9) + '-' + buf.toString('hex', start + 10, start + 11) + '-' + buf.toString('hex', start + 11, start + 12) + ' '; //yyyy-MM-dd
+            str += buf.toString('hex', start + 8, start + 10) + '-' + buf.toString('hex', start + 10, start + 11) + '-' + buf.toString('hex', start + 11, start + 12) + ' '; //yyyy-MM-dd
             str += buf.toString('hex', start + 12, start + 13) + ':' + buf.toString('hex', start + 13, start + 14) + ':' + buf.toString('hex', start + 14, start + 15); //HH:mm:ss
             exportData.push(str);
         }

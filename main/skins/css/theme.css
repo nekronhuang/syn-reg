@@ -152,10 +152,10 @@ md-checkbox{
     border-radius: 0 0 5px 5px;
 }
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 12px;
 }
 ::-webkit-scrollbar-thumb {
-    border-radius: 5px;
+    border-radius: 7px;
     border: 1px solid #fff;
     background: rgb(66, 66, 66);
     background-clip: padding-box;

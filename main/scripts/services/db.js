@@ -4,4 +4,8 @@ angular.module('service.db', []).service('DB', function($rootScope) {
         filename: './AppData/logs.db',
         autoload: true
     });
+    this.local = new nedb({
+        filename: './AppData/TCT.db',
+        autoload: true
+    });
 });

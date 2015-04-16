@@ -135,7 +135,7 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
     };
     $scope.indexSettings = localStorage.getItem('$index') ? angular.fromJson(localStorage.getItem('$index')) : [{
         "start": "0",
-        "end": "4",
+        "end": "2",
         "fn": "00001",
         "aes": {
             "type": "00",
@@ -144,29 +144,19 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         "keyA": "0001",
         "keyB": "0001"
     }, {
-        "start": "7",
-        "end": "7",
+        "start": "3",
+        "end": "11",
         "fn": "00010",
         "aes": {
             "type": "01",
             "needInit": false
         },
         "keyA": "0000",
-        "keyB": "0010"
+        "keyB": "0000"
     }, {
-        "start": "5",
-        "end": "6",
+        "start": "12",
+        "end": "12",
         "fn": "00011",
-        "aes": {
-            "type": "00",
-            "needInit": false
-        },
-        "keyA": "0010",
-        "keyB": "0010"
-    }, {
-        "start": "8",
-        "end": "13",
-        "fn": "00010",
         "aes": {
             "type": "01",
             "needInit": false
@@ -179,10 +169,20 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
         "fn": "00100",
         "aes": {
             "type": "01",
-            "needInit": true
+            "needInit": false
         },
         "keyA": "0000",
         "keyB": "0000"
+    }, {
+        "start": "13",
+        "end": "13",
+        "fn": "00101",
+        "aes": {
+            "type": "01",
+            "needInit": false
+        },
+        "keyA": "0010",
+        "keyB": "0010"
     }];
 }).controller('extraSettingsCtrl', function($rootScope, $scope, Advanced) {
     $scope.clear = function() {

@@ -8,6 +8,7 @@ var ffi = require('ffi'),
         SetBeep: ['void', ['bool']],
         SetBeepTime: ['void', ['int']],
         setQRable: ['void', ['bool']],
+        setBarcode: ['void', ['bool']],
         GetDecodeString: ['void', ['char *']]
     });
 
@@ -22,6 +23,7 @@ process.on('message', function(msg) {
             break;
         case 2:
             RC.setQRable(true);
+            RC.setBarcode(true);
             var buf = new Buffer(100),
                 loop;
             buf.type = ref.types.CString;
@@ -29,6 +31,7 @@ process.on('message', function(msg) {
                 RC.GetDecodeString(buf);
                 if (ref.readCString(buf, 0)) {
                     RC.setQRable(false);
+                    RC.setBarcode(false);
                     clearInterval(loop);
                     process.send({
                         type: 2,
@@ -41,5 +44,6 @@ process.on('message', function(msg) {
 });
 
 process.on('error',function(err){
-    process.send({content:err})
+    process.send({err:err});
+    process.exit(1);
 });

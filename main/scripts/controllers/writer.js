@@ -1,8 +1,16 @@
 angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $timeout, $filter, $http, $modal, Tools, Write, Read, writerInput, DB) {
     var async = require('async');
     $scope.states = writerInput.states;
+    $scope.qnInput = {
+        FieldA: '3D打印与增材制造设备',
+        FieldB: '原型制造与产品开发',
+        FieldC: '软件系统',
+        FieldD: '3D扫描与数字化模块',
+        FieldE: '3D打印耗材部分',
+        FieldF: '3D打印部件与其他服务',
+    };
     $scope.pre = function() {
-        $http.get($window.sessionStorage.getItem('$server') + '/find/single?filter[id]=' + $scope.searchInput, {
+        $http.get($window.sessionStorage.getItem('$server') + '/find/single?filter[key]=' + $scope.searchInput, {
             timeout: 1000
         }).success(function(res, status) {
             if (res.data) {
@@ -12,12 +20,20 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 $rootScope.showDialog('无匹配!');
             }
         }).error(function() {
-            $rootScope.showDialog('网络异常!');
+            $rootScope.showDialog('网络异常,使用本地数据库!');
+            DB.local.findOne({
+                key: $scope.searchInput
+            }, {
+                _id: 0
+            }, function(err, doc) {
+                if (doc) {
+                    $scope.info = doc;
+                    $scope.reg_type.value = doc.reg_type;
+                } else {
+                    $rootScope.showDialog('无匹配!');
+                }
+            });
         });
-    };
-    $scope.preNext = function() {
-        $scope.searchInput = (parseInt($scope.searchInput) + 1).toString();
-        $scope.pre();
     };
     $scope.getIdSearch = function(val) {
         if (val && val.length == 10) {
@@ -29,7 +45,16 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     $scope.info.fir = '';
                     $scope.info.co = '';
                     $scope.info.pos = '';
-                    $scope.info.qn = [0, 0, 0, 0, 0];
+                    $scope.info.qn = {
+                        FieldA: 0,
+                        FieldB: 0,
+                        FieldC: 0,
+                        FieldD: 0,
+                        FieldE: 0,
+                        FieldF: 0,
+                    };
+                    $scope.info.pre = 0;
+                    $scope.info.auth = ['00000000', '00000000'];
                     return $rootScope.showDialog('已登记!');
                 }
                 if (res.data) {
@@ -39,7 +64,23 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     $rootScope.showDialog('无匹配!');
                 }
             }).error(function() {
-                $rootScope.showDialog('网络异常!');
+                $rootScope.showDialog('网络异常,使用本地数据库!');
+                DB.local.findOne({
+                    id: val
+                }, {
+                    _id: 0
+                }, function(err, doc) {
+                    if (doc) {
+                        if (doc.reg_time) {
+                            $rootScope.showDialog('已登记!');
+                        } else {
+                            $scope.info = doc;
+                            $scope.reg_type.value = doc.reg_type;
+                        }
+                    } else {
+                        $rootScope.showDialog('无匹配!');
+                    }
+                });
             });
         }
     };
@@ -61,6 +102,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
     };
     $scope.getName = function(val) {
         $scope.info = val;
+        $scope.reg_type.value = val.reg_type;
     };
     $scope.getCompanySearch = function(val) {
         if (!$scope.liveSearch) {
@@ -90,8 +132,16 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         fir: '',
         co: '',
         pos: '',
-        qn: [0, 0, 0, 0, 0],
-        auth: new Array($scope.authInput.length)
+        qn: {
+            FieldA: 0,
+            FieldB: 0,
+            FieldC: 0,
+            FieldD: 0,
+            FieldE: 0,
+            FieldF: 0,
+        },
+        auth: ['00000000', '00000000'],
+        pre: 0
     };
     $scope.clearAll = function() {
         $scope.info = {
@@ -99,8 +149,16 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             fir: '',
             co: '',
             pos: '',
-            qn: [0, 0, 0, 0, 0],
-            auth: new Array($scope.authInput.length)
+            qn: {
+                FieldA: 0,
+                FieldB: 0,
+                FieldC: 0,
+                FieldD: 0,
+                FieldE: 0,
+                FieldF: 0,
+            },
+            auth: ['00000000', '00000000'],
+            pre: 0
         };
         if (!$scope.$$phase) {
             $scope.$digest();
@@ -116,13 +174,16 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
     };
     $scope.spAuth = function() {
         for (var i = 0, len = $scope.info.auth.length; i < len; i++) {
-            if ($scope.info.auth[i]) {
+            if ($scope.info.auth[i] != '00000000') {
                 Tools.communicateSP($rootScope.sPort, new Buffer('430f', 'hex'));
                 break;
             }
         }
     };
     $scope.printBadge = function() {
+        if (!$scope.info.id) {
+            return $rootScope.showDialog('编号不能为空!');
+        }
         var para = {
             method: '2',
             printname: $window.sessionStorage.getItem('$barcode'),
@@ -136,7 +197,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         };
         switch ($scope.reg_type.value) {
             case 0:
-                var name = ($scope.info.sur + ' ' + $scope.info.fir).trim() || '参会代表',
+                var name = ($scope.info.fir + ' ' + $scope.info.sur).trim() || '参会代表',
                     position = $scope.info.pos || '',
                     company = $scope.info.co || '';
                 if (name.length > 6) {
@@ -168,7 +229,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         special: '0'
                     });
                 }
-                if(/[\u4e00-\u9fa5]/.test(position)){
+                if (/[\u4e00-\u9fa5]/.test(position)) {
                     para.content.content_core.push({
                         text: position,
                         size: position.length > 17 ? '10' : '14',
@@ -183,7 +244,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         space: '0',
                         special: '0'
                     });
-                }else{
+                } else {
                     para.content.content_core.push({
                         text: position,
                         size: position.length > 36 ? '10' : '12',
@@ -215,13 +276,10 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         special: '0'
                     });
                 }
-                if (temp.length == 0) {
-                    return $rootScope.showDialog('未选择权限!');
-                }
                 para.content.content_num = String(para.content.content_core.length);
                 break;
             case 1:
-                var name = ($scope.info.sur + ' ' + $scope.info.fir).trim() || '现场观众',
+                var name = ($scope.info.fir + ' ' + $scope.info.sur).trim() || '现场观众',
                     position = $scope.info.pos || '',
                     company = $scope.info.co || '';
                 if (name.length > 6) {
@@ -253,7 +311,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         special: '0'
                     });
                 }
-                if(/[\u4e00-\u9fa5]/.test(position)){
+                if (/[\u4e00-\u9fa5]/.test(position)) {
                     para.content.content_core.push({
                         text: position,
                         size: position.length > 17 ? '10' : '14',
@@ -268,7 +326,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         space: '0',
                         special: '0'
                     });
-                }else{
+                } else {
                     para.content.content_core.push({
                         text: position,
                         size: position.length > 36 ? '10' : '12',
@@ -284,12 +342,20 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         special: '0'
                     });
                 }
+                para.content.content_core.push({
+                    text: $scope.info.id || '',
+                    size: '9',
+                    style: '0',
+                    xPos: '8',
+                    yPos: '8',
+                    special: '2'
+                });
                 para.content.content_num = String(para.content.content_core.length);
                 break;
             case 2:
             case 3:
             case 4:
-                var name = ($scope.info.sur + ' ' + $scope.info.fir).trim() || $scope.reg_type.kind[$scope.reg_type.value].display,
+                var name = ($scope.info.fir + ' ' + $scope.info.sur).trim() || $scope.reg_type.kind[$scope.reg_type.value].display,
                     position = $scope.info.pos || '',
                     company = $scope.info.co || '';
                 if (name.length > 6) {
@@ -321,7 +387,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         special: '0'
                     });
                 }
-                if(/[\u4e00-\u9fa5]/.test(position)){
+                if (/[\u4e00-\u9fa5]/.test(position)) {
                     para.content.content_core.push({
                         text: position,
                         size: position.length > 17 ? '10' : '14',
@@ -336,7 +402,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         space: '0',
                         special: '0'
                     });
-                }else{
+                } else {
                     para.content.content_core.push({
                         text: position,
                         size: position.length > 36 ? '10' : '12',
@@ -409,7 +475,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 });
                 //展位号填写在名字中
                 para.content.content_core.push({
-                    text: '展位号：' + ($scope.info.sur || ''),
+                    text: '展位号：' + ($scope.info.pos || ''),
                     size: '12',
                     style: '0',
                     space: '0',
@@ -449,7 +515,23 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         Tools.communicateBarcode(para);
     };
     $scope.printGuide = function() {
-        Tools.communicateLaser({});
+        if (!$scope.info.id) {
+            return $rootScope.showDialog('编号不能为空!');
+        }
+        var para = {
+            id: $scope.info.id,
+            exhibitorsRecommendedPath: './AppData/exhibitors_recommended.txt',
+            exhibitorsInfoPath: './AppData/exhibitors_info.txt',
+            FieldA: Number($scope.info.qn.FieldA),
+            FieldB: Number($scope.info.qn.FieldB),
+            FieldC: Number($scope.info.qn.FieldC),
+            FieldD: Number($scope.info.qn.FieldD),
+            FieldE: Number($scope.info.qn.FieldE),
+            FieldF: Number($scope.info.qn.FieldF),
+            PrinterName: $window.sessionStorage.getItem('$laser'),
+        };
+        console.log(para);
+        Tools.communicateLaser(para);
     };
     $scope.make = function() {
         $scope.spWrite();
@@ -472,8 +554,53 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         $lte: tomorrow
                     },
                     cy: {
-                        $in: ['', '中国']
+                        $in: ['', 'China / 中国']
                     }
+                }, next);
+            },
+            web: function(next){
+                DB.logs.count({
+                    reg_time: {
+                        $gte: today,
+                        $lte: tomorrow
+                    },
+                    pre: 1
+                }, next);
+            },
+            wechat: function(next) {
+                DB.logs.count({
+                    reg_time: {
+                        $gte: today,
+                        $lte: tomorrow
+                    },
+                    pre: 2
+                }, next);
+            },
+            group: function(next) {
+                DB.logs.count({
+                    reg_time: {
+                        $gte: today,
+                        $lte: tomorrow
+                    },
+                    pre: 3
+                }, next);
+            },
+            sms: function(next) {
+                DB.logs.count({
+                    reg_time: {
+                        $gte: today,
+                        $lte: tomorrow
+                    },
+                    pre: 4
+                }, next);
+            },
+            conf: function(next) {
+                DB.logs.count({
+                    reg_time: {
+                        $gte: today,
+                        $lte: tomorrow
+                    },
+                    pre: 5
                 }, next);
             },
             total: function(next) {
@@ -483,7 +610,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                         $lte: tomorrow
                     }
                 }, next);
-            }
+            },
         }, function(err, res) {
             if (err) console.error(err);
             var modalInstance = $modal.open({
@@ -499,7 +626,6 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         Tools.communicateRC({
             type: 1
         });
-        // $rootScope.showDialog('未启用!');
     };
     $scope.liveSearch = $window.localStorage.getItem('$liveSearch') ? false : true;
     $scope.modifySetting = function() {
@@ -531,6 +657,12 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
     $scope.render = function(data) {
         try {
             var output = angular.fromJson(data);
+            if (!output.auth) {
+                output.auth = ['00000000', '00000000'];
+            }
+            if(output.reg_type){
+                $scope.reg_type.value=output.reg_type;
+            }
             $scope.info = output;
             $scope.$digest();
         } catch (e) {
@@ -540,7 +672,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
 
     $document.keyup(function(evt) {
         var $basicInfo = angular.element('#basic-info .input-wrap'),
-            $qnInfo = angular.element('#qn-info .input-wrap');
+            $qnInfo = angular.element('#qn-info .md-primary');
         switch (evt.keyCode) {
             case 83: //ctrl+s
                 if (evt.ctrlKey) {
@@ -554,7 +686,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             case 53:
             case 54:
                 if (evt.altKey) {
-                    $qnInfo.eq(evt.keyCode - 49).find('input').focus();
+                    $qnInfo.eq(evt.keyCode - 49).trigger('click');
                 } else if (evt.ctrlKey) {
                     $basicInfo.eq(evt.keyCode - 49).find('input').focus();
                 }
@@ -585,8 +717,29 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         }
     });
     $scope.$on('rc', function(evt, msg) {
+        console.log(msg.content);
         if (msg.content) {
-            $scope.info.id = msg.content;
+            if (msg.content.length <= 10) {
+                $scope.info.id = msg.content;
+                $scope.getIdSearch($scope.info.id);
+            } else if (/\|/.test(msg.content)) {
+                var temp = msg.content.split('|');
+                $scope.info.id = temp[0];
+                $scope.info.sur = temp[1];
+                $scope.info.co = temp[2];
+                $scope.info.pos = temp[3];
+                $scope.info.qn = {
+                    FieldA: Number(/TCT-301/.test(temp[4])),
+                    FieldB: Number(/TCT-304/.test(temp[4])),
+                    FieldC: Number(/TCT-302/.test(temp[4])),
+                    FieldD: Number(/TCT-305/.test(temp[4])),
+                    FieldE: Number(/TCT-306/.test(temp[4])),
+                    FieldF: Number(/TCT-303/.test(temp[4])),
+                };
+                $scope.info.pre = 2;
+            } else {
+                $rootScope.showDialog('解析错误，请手动输入条码编号!');
+            }
             $scope.$digest();
         }
     });

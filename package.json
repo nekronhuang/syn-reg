@@ -17,14 +17,14 @@
     "ffi": "git+https://github.com/kjunichi/node-ffi.git#bad796888ad564bbc6a15b73579223b8f118605e"
   },
   "window": {
-    "toolbar": false,
+    "toolbar": true,
     "icon": "./main/skins/images/brand.png",
     "position": "center",
     "resizable": false,
     "width": 1300,
     "height": 700,
     "frame": false,
-    "show": false
+    "show": true
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -36,5 +36,10 @@
   "bugs": {
     "url": "https://github.com/nekronhuang/syn-reg/issues"
   },
-  "homepage": "https://github.com/nekronhuang/syn-reg"
+  "homepage": "https://github.com/nekronhuang/syn-reg",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-load-plugins": "^0.10.0",
+    "main-bower-files": "^2.6.2"
+  }
 }

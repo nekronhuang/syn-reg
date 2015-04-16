@@ -76,7 +76,8 @@ $RECYCLE.BIN/
 *.msp
 
 # bower
-/bower_components
+/tools/bower_components
+/main/libs
 
 # local
 /AppData

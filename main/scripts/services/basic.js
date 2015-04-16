@@ -8,23 +8,22 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                 sp.list(next);
             },
             function(ports, next) {
-                console.debug('>>>>>ports:', ports);
-                if (ports.length) {
-                    var now = $rootScope.sPort ? $rootScope.sPort.path : null;
-                    async.map(ports, function(item, cb) {
-                        if (item.comName != now) {
-                            var tmp = new sp.SerialPort(item.comName, {
-                                baudrate: 57600,
-                                parser: sp.parsers.custom()
-                            }, false);
-                            cb(null, tmp);
-                        } else {
-                            cb(null, $rootScope.sPort);
-                        }
-                    }, next);
-                } else {
-                    next(null, []);
+                //console.debug('>>>>>ports:', ports);
+                var now = $rootScope.sPort ? $rootScope.sPort.path : null,
+                    sPorts = [];
+                for (var i = 0, len = ports.length; i < len; i++) {
+                    var item = ports[i];
+                    if (item.comName == now) {
+                        sPorts.push($rootScope.sPort);
+                    } else if (item.manufacturer == 'Silicon Laboratories') {
+                        var tmp = new sp.SerialPort(item.comName, {
+                            baudrate: 57600,
+                            parser: sp.parsers.custom()
+                        }, false);
+                        sPorts.push(tmp);
+                    }
                 }
+                next(null, sPorts);
             },
             function(sPorts, next) {
                 var results = [];
@@ -62,7 +61,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                                     });
                                     cb();
                                 }).on('data', function(buf) {
-                                    console.debug('buf:', buf.toString('hex'));
+                                    //console.debug('buf:', buf.toString('hex'));
                                     auto = false;
                                     if (buf[2] == 0x77) {
                                         results.push({
@@ -132,7 +131,11 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                 }, false);
                 $rootScope.sPort.id = readId ? readId : 0;
                 $rootScope.sPort.open(function(err) {
-                    if (err) return $rootScope.sPort = null;
+                    if (err) {
+                        $rootScope.sPort = null;
+                    }else{
+                        $rootScope.showDialog('COM打开');
+                    }
                 });
                 $rootScope.sPort.on('data', function(buf) {
                     var data = buf.toString('hex'),
@@ -148,7 +151,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                         }
                         return;
                     }
-                    console.debug('>>>>>buffer:', data);
+                    //console.debug('>>>>>buffer:', data);
                     switch (status) {
                         case '3163':
                             Write.c();
@@ -199,6 +202,9 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                         case '5a73':
                             Export.save(buf);
                             break;
+                        case '5c73':
+                            Import.s();
+                            break;
                     }
                 }).once('error', function(err) {
                     myCache.get('sPanel').scope().error();
@@ -228,12 +234,12 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
             $rootScope.showDialog('未连接!');
         }
     };
-    $window.onbeforeunload = function(event) { //f5
-        if ($rootScope.sPort) {
-            // Tools.communicateSP($rootScope.sPort, new Buffer('3e', 'hex'));
-            $rootScope.sPort.close(function() {
-                $rootScope.sPort = null;
-            });
-        }
-    };
+    // $window.onbeforeunload = function(event) { //f5
+    //     if ($rootScope.sPort) {
+    //         // Tools.communicateSP($rootScope.sPort, new Buffer('3e', 'hex'));
+    //         $rootScope.sPort.close(function() {
+    //             $rootScope.sPort = null;
+    //         });
+    //     }
+    // };
 });

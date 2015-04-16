@@ -11,7 +11,7 @@ angular.module('service.tools', []).service('Tools', function($window, $rootScop
             var x = value.length,
                 y = -x,
                 v = Buffer.concat([new Buffer([0x23, x >> 8, x, y >>> 0 >> 8, y >>> 0]), value, new Buffer([0x25])]);
-            console.debug('communicate:', v.toString('hex'));
+            //console.debug('communicate:', v.toString('hex'));
             port.write(v, function(err) {
                 if (err) return console.error('write', err);
                 if (callback) callback();
@@ -60,7 +60,10 @@ angular.module('service.tools', []).service('Tools', function($window, $rootScop
     rc.on('message', function(msg) {
         $rootScope.$broadcast('rc', msg);
     });
-    this.communicateRC = function(para){
+    laser.on('message', function(msg) {
+        console.log(msg);
+    });
+    this.communicateRC = function(para) {
         rc.send(para);
     };
     this.communicateBarcode = function(para) {

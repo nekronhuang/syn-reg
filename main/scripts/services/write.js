@@ -6,13 +6,18 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
     this.buffer = new Buffer(parseInt($window.localStorage.getItem('$infoSections')) * 48 + 1);
     this.g = function(input, extra) {
         doc = angular.copy(input);
+        if (!doc.cy) {
+            doc.cy = '';
+        }
         doc.reg_type = extra.reg_type;
         doc.reg_time = Date.now();
         var content = {
+            id: input.id,
             sur: input.sur || '观众',
             fir: input.fir || '',
             co: input.co || '',
-            pos: input.pos || ''
+            pos: input.pos || '',
+            reg_type: extra.reg_type
         };
         self.buffer.fill(0);
         self.buffer[0] = 0x31;
@@ -33,7 +38,7 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
         async.parallel([
             function(next) {
                 DB.logs.update({
-                    cardid: doc.cardid
+                    id: doc.id
                 }, {
                     $set: doc
                 }, {

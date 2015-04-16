@@ -8,7 +8,7 @@ angular.module('service.read', ['service.tools']).service('Read', function($root
             Tools.showLog('读取完成,该卡为空!');
             return;
         }
-        angular.element('#wPanel').scope().render(data.substring(2));
+        angular.element('#wPanel').scope().render(data);
         Tools.showLog('读取完成!');
     };
 });
