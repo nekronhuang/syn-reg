@@ -1,6 +1,6 @@
 var async = require('async'),
     sp = require('serialport');
-angular.module('service.basic', ['service.write', 'service.read', 'service.tools', 'service.import', 'service.export', 'service.format', 'service.advanced']).service('Basic', function($window, $rootScope, $filter, $cacheFactory, Tools, Write, Read, Import, Export, Format, Advanced, $timeout) {
+angular.module('service.basic', ['service.write', 'service.read', 'service.tools', 'service.import', 'service.export', 'service.format', 'service.advanced','service.parser']).service('Basic', function($window, $rootScope, $filter, $cacheFactory, Tools, Write, Read, Import, Export, Format, Advanced,Parser, $timeout) {
     var myCache = $cacheFactory.get('myCache');
     this.list = function(callback) {
         async.waterfall([
@@ -18,7 +18,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                     } else if (item.manufacturer == 'Silicon Laboratories') {
                         var tmp = new sp.SerialPort(item.comName, {
                             baudrate: 57600,
-                            parser: sp.parsers.custom()
+                            parser: Parser.normal
                         }, false);
                         sPorts.push(tmp);
                     }
@@ -127,7 +127,7 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
             if (!$rootScope.sPort) {
                 $rootScope.sPort = new sp.SerialPort(com, {
                     baudrate: 57600,
-                    parser: sp.parsers.custom()
+                    parser: Parser.normal
                 }, false);
                 $rootScope.sPort.id = readId ? readId : 0;
                 $rootScope.sPort.open(function(err) {

@@ -53,4 +53,4 @@ angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 
 
 angular.module('app.controllers', ['controller.wPanel', 'controller.rPanel', 'controller.sPanel', 'controller.cPanel']);
 
-angular.module('app.services', ['service.write', 'service.read', 'service.export', 'service.import', 'service.format', 'service.advanced', 'service.basic']);
+angular.module('app.services', ['service.write', 'service.read', 'service.export', 'service.import', 'service.format', 'service.advanced', 'service.basic','service.parser']);
