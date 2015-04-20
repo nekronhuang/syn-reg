@@ -1,0 +1,100 @@
+<div class="container-fluid">
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav pull-right">
+      <li ng-click="toggleKeyShown()" class="dropdown">
+        <a href="#">
+          <i class="icon icon-keyboard"></i>
+        </a>
+        <ul class="dropdown-menu show" ng-show="isKeyShown" style="min-width:200px;max-height:450px;">
+          <li>
+            <a href="###">
+              CTRL+S
+              <span style="inline-block" class="pull-right">制卡</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              TAB
+              <span style="inline-block" class="pull-right">下一栏</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              SHIFT+TAB
+              <span style="inline-block" class="pull-right">上一栏</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              CTRL+编号
+              <span style="inline-block" class="pull-right">基础栏跳转</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              ALT+编号
+              <span style="inline-block" class="pull-right">问卷栏跳转</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              F1
+              <span style="inline-block" class="pull-right">写卡</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              F2
+              <span style="inline-block" class="pull-right">读卡</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              F3
+              <span style="inline-block" class="pull-right">打印胸卡</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              F4
+              <span style="inline-block" class="pull-right">打印导览图</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              F7
+              <span style="inline-block" class="pull-right">二维码识别</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              F9
+              <span style="inline-block" class="pull-right">清空输入项</span>
+            </a>
+          </li>
+          <li>
+            <a href="###">
+              F12
+              <span style="inline-block" class="pull-right">开/关帮助</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li ng-click="minimize()">
+        <a href="#">
+          <i class="icon icon-minus"></i>
+        </a>
+      </li>
+      <li ng-click="toggleMaximize()">
+        <a href="#">
+          <i class="icon" ng-class="isKiosk?'icon-contract-2':'icon-expand-2'"></i>
+        </a>
+      </li>
+      <li ng-click="close()">
+        <a href="#">
+          <i class="icon icon-close"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

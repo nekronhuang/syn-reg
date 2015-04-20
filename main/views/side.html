@@ -1,0 +1,27 @@
+<div class="brand-wrap" flex>
+  <div class="brand">
+    <img src="skins/images/logo.png">
+  </div>
+</div>
+<ul flex>
+  <li class="menu" ng-class="{active:$root.activePanel=='wPanel'}" ng-click="$root.activePanel='wPanel'">
+    <a href="###">写机器通讯</a>
+  </li>
+  <li class="menu" ng-class="{active:$root.activePanel=='rPanel'}" ng-click="$root.activePanel='rPanel'">
+    <a href="###">读机器通讯</a>
+  </li>
+  <li class="menu" ng-class="{active:$root.activePanel=='sPanel'}" ng-click="$root.activePanel='sPanel'">
+    <a href="###">设置</a>
+  </li>
+</ul>
+<div class="menu" flex id="cPanel" ng-controller="cPanelCtrl">
+  <a href="###">
+    <i class="icon-copy-2"></i> 消息记录
+  </a>
+  <ul ng-nicescroll="{cursorcolor:'#aaa',cursorborder:'1px solid #1a1c20'}">
+    <li ng-repeat="item in info">
+      {{item.date|date:'yyyy-MM-dd HH:mm'}}
+      <br> {{item.msg}}
+    </li>
+  </ul>
+</div>

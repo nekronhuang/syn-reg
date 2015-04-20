@@ -11,6 +11,9 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
     $scope.disconnect = function() {
         Basic.disconnect();
         $scope.spCheck.text = '请点击...';
+        if (!$scope.$$phase) {
+            $scope.$digest();
+        }
     };
     $scope.list = function(e) {
         e.preventDefault();
@@ -31,9 +34,8 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
             });
         }
     };
-    $scope.$on('error', function() {
-        $scope.spCheck.text = '请点击...';
-        $scope.$digest();
+    $scope.$on('disconnect',function(){
+        $scope.disconnect();
     });
     $scope.build = function(item) {
         $scope.spCheck.text = item.display;

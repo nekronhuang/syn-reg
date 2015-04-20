@@ -1,8 +1,10 @@
 angular.module('service.parser', []).service('Parser', function() {
-    var cache = new Buffer(512),
+    var self = this,
+        cache = new Buffer(512),
         nowLength,
         totalLength;
     clear();
+    this.flow = false;
 
     this.normal = function(emitter, newBuffer) {
         newBuffer.copy(cache, nowLength);
@@ -26,7 +28,11 @@ angular.module('service.parser', []).service('Parser', function() {
         }
         if (nowLength >= totalLength + 6) {
             if (cache[totalLength + 5] == 0x25) {
-                emitter.emit('data', cache.slice(5, 5 + totalLength));
+                if (self.flow) {
+                    emitter.emit('flow', cache.slice(5, 5 + totalLength));
+                } else {
+                    emitter.emit('data', cache.slice(5, 5 + totalLength));
+                }
             }
             clear();
         }

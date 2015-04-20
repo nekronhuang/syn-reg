@@ -4,6 +4,7 @@ An example usage of nw.js, edge.js, node-serialport, node-ffi and angular.js.
 
 ## Setup
 **Note: Only support Windows 32-bit**
+
 Assuming the version of nw.js is 0.12.1.
 
 ### edge.js
