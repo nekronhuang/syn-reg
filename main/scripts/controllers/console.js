@@ -1,4 +1,6 @@
-angular.module('controller.cPanel', []).controller('cPanelCtrl', function($scope, $element) {
+angular.module('controller.cPanel', []).controller('cPanelCtrl', function($scope,$cacheFactory) {
+    var myCache = $cacheFactory.get('myCache');
+    myCache.put('cPanel', $scope);
     $scope.info = [];
     $scope.add = function(info) {
         $scope.info.unshift(info);

@@ -1,5 +1,7 @@
-angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $timeout, $filter, $http, $modal, Tools, Write, Read, writerInput, DB) {
-    var async = require('async');
+angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope,$cacheFactory, $timeout, $filter, $http, $modal, Tools, Write, Read, writerInput, DB) {
+    var async = require('async'),
+        myCache = $cacheFactory.get('myCache');
+    myCache.put('wPanel', $scope);
     $scope.states = writerInput.states;
     $scope.qnInput = {
         FieldA: '3D打印与增材制造设备',
@@ -558,7 +560,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                     }
                 }, next);
             },
-            web: function(next){
+            web: function(next) {
                 DB.logs.count({
                     reg_time: {
                         $gte: today,
@@ -660,8 +662,8 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             if (!output.auth) {
                 output.auth = ['00000000', '00000000'];
             }
-            if(output.reg_type){
-                $scope.reg_type.value=output.reg_type;
+            if (output.reg_type) {
+                $scope.reg_type.value = output.reg_type;
             }
             $scope.info = output;
             $scope.$digest();

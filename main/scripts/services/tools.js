@@ -1,7 +1,7 @@
 angular.module('service.tools', []).service('Tools', function($window, $rootScope, $cacheFactory) {
     var myCache = $cacheFactory.get('myCache');
     this.showLog = function(msg) {
-        myCache.get('cPanel').scope().add({
+        myCache.get('cPanel').add({
             date: Date.now(),
             msg: msg
         });
@@ -20,9 +20,6 @@ angular.module('service.tools', []).service('Tools', function($window, $rootScop
             $rootScope.showDialog('未连接!');
             if ($rootScope.activePanel != 'sPanel') {
                 $rootScope.activePanel = 'sPanel';
-                myCache.get('sPanel').scope().active = 0;
-            } else {
-                myCache.get('sPanel').scope().active = 0;
             }
         }
     };

@@ -1,6 +1,6 @@
-<div id="center">
-  <div class="control-panel" id="wPanel" ng-show="$root.activePanel=='wPanel'" ng-controller="wPanelCtrl">
-    <div class="content">
+<md-content id="center" layout flex>
+  <md-content flex layout="column" layout-fill class="control-panel" id="wPanel" ng-show="$root.activePanel=='wPanel'" ng-controller="wPanelCtrl">
+    <md-content flex class="panel-header" layout="row" layout-align="center center">
       <div class="form-inline">
         <div class="form-group">
           <input type="text" class="form-control" ng-model="searchInput">
@@ -9,101 +9,72 @@
         <button type="submit" class="btn btn-primary">网络</button>
         <button type="submit" class="btn btn-primary" title="只支持本地数据库" ng-click="fuzzySearch()">模糊</button>
       </div>
-      <form class="form-horizontal">
-        <div class="form-group" id="basic-info">
-          <h2>
-            <small>基础信息：</small>
-          </h2>
-          <script type="text/ng-template" id="nameTpl.html">
-            <a tabindex="-1">
-              <span bind-html-unsafe="match.model.sur| typeaheadHighlight:query"></span>
-              <em>&nbsp;{{match.model.co}}
-                <span class="text-success" ng-if="match.model.reg_time">&nbsp;已登记</span>
-                <span class="text-danger" ng-if="!match.model.reg_time">&nbsp;未登记</span>
-              </em>
-            </a>
-          </script>
-          <div class="col-sm-4 input-wrap" ng-repeat="item in input" ng-if="item.visible">
-            <div class="row">
-              <label class="col-sm-3 control-label">{{item.display}}</label>
-              <div class="col-sm-8" ng-switch on="item.key">
-                <input class="form-control" ng-model="info.sur" ng-switch-when="sur" typeahead="c as c.sur for c in getNameSearch($viewValue)" typeahead-template-url="nameTpl.html" typeahead-on-select="getName($item)" typeahead-wait-ms="300">
-                <input class="form-control" ng-model="info.co" ng-switch-when="co" typeahead="c for c in getCompanySearch($viewValue) | limitTo:10" typeahead-wait-ms="300">
-                <input class="form-control" ng-model="info.cy" ng-switch-when="cy" typeahead="c for c in states | filter:$viewValue | limitTo:10" typeahead-wait-ms="300" typeahead-min-length="3">
-                <input class="form-control" ng-model="info.id" ng-switch-when='id' ng-change="getIdSearch(info.id)">
-                <input class="form-control" ng-model="info[item.key]" ng-switch-default>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group" id="qn-info">
-          <h2>
-            <small>问卷信息：</small>
-          </h2>
-          <md-checkbox md-no-ink ng-model="info.qn[k]" aria-label="qn" class="md-primary col-sm-3" ng-true-value="1" ng-false-value="0" ng-repeat="(k,v) in info.qn">
-            {{qnInput[k]}}
-          </md-checkbox>
-        </div>
-        <div class="form-group">
-          <h2>
-            <small>权限设置：</small>
-          </h2>
-          <md-checkbox md-no-ink ng-model="info.auth[$index]" aria-label="auth" ng-repeat="item in authInput" class="md-primary col-sm-3" ng-true-value="'{{item.value}}'" ng-false-value="'00000000'">
-            {{ item.display }}
-          </md-checkbox>
-        </div>
-        <div class="form-group">
-          <h2>
-            <small>登记情况：</small>
-          </h2>
-          <div class="col-sm-4 input-wrap">
-            <div class="row">
-              <label class="col-sm-3 control-label">登记时间</label>
-              <div class="col-sm-8">
-                <input class="form-control" date-format ng-model="info.reg_time" disabled="true">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <h2>
-            <small>打印设置：</small>
-          </h2>
-          <label class="col-sm-2 control-label">胸牌类型：</label>
-          <div class="col-sm-8">
-            <label class="radio-inline" ng-repeat="item in reg_type.kind">
-              <input type="radio" ng-model="reg_type.value" ng-value="$index"> {{item.display}}
-            </label>
-          </div>
-        </div>
-      </form>
-    </div>
-    <footer layout>
-      <section class="funcbar" layout="vertical" layout-sm="horizontal" layout-align="center center">
+    </md-content>
+    <md-content class="panel-section" flex md-scroll-y>
+      <h4 class="subtitle">
+        <small>基础信息：</small>
+      </h4>
+      <div class="input-wrap" layout="row" layout-wrap id="basic-info">
+        <md-input-container flex="33" ng-repeat="item in input" ng-if="item.visible" ng-switch on="item.key">
+          <label>{{item.display}}</label>
+          <input ng-model="info.sur" ng-switch-when="sur" typeahead="c as c.sur for c in getNameSearch($viewValue)" typeahead-template-url="nameTpl.html" typeahead-on-select="getName($item)" typeahead-wait-ms="300">
+          <input ng-model="info.co" ng-switch-when="co" typeahead="c for c in getCompanySearch($viewValue) | limitTo:10" typeahead-wait-ms="300">
+          <input ng-model="info.cy" ng-switch-when="cy" typeahead="c for c in states | filter:$viewValue | limitTo:10" typeahead-wait-ms="300" typeahead-min-length="3">
+          <input ng-model="info.id" ng-switch-when='id' ng-change="getIdSearch(info.id)">
+          <input ng-model="info[item.key]" ng-switch-default>
+        </md-input-container>
+      </div>
+      <h4 class="subtitle">
+        <small>问卷信息：</small>
+      </h4>
+      <div class="input-wrap" layout="row" layout-wrap id="qn-info">
+        <md-checkbox md-no-ink ng-model="info.qn[k]" aria-label="qn" class="md-primary" ng-true-value="1" ng-false-value="0" ng-repeat="(k,v) in info.qn" flex="25">
+          {{qnInput[k]}}
+        </md-checkbox>
+      </div>
+      <h4 class="subtitle">
+        <small>权限设置：</small>
+      </h4>
+      <div class="input-wrap" layout="row" layout-wrap>
+        <md-checkbox md-no-ink ng-model="info.auth[$index]" aria-label="auth" ng-repeat="item in authInput" class="md-primary" ng-true-value="'{{item.value}}'" ng-false-value="'00000000'" flex="25">
+          {{ item.display }}
+        </md-checkbox>
+      </div>
+      <h4 class="subtitle">
+        <small>胸牌类型：</small>
+      </h4>
+      <md-radio-group ng-model="reg_type.value" class="input-wrap last" layout="row" layout-wrap>
+        <md-radio-button md-no-ink class="md-primary" ng-repeat="item in reg_type.kind" ng-value="$index">
+          {{item.display}}
+        </md-radio-button>
+      </md-radio-group>
+    </md-content>
+    <md-content class="panel-footer" flex layout="row">
+      <div class="left" flex layout="row" layout-align="start center">
         <md-button class="md-raised" ng-click="make();$event.stopPropagation();">制卡</md-button>
         <md-button class="md-raised" ng-click="spWrite();$event.stopPropagation();">写卡</md-button>
         <md-button class="md-raised" ng-click="spRead();$event.stopPropagation();">读卡</md-button>
         <md-button class="md-raised" ng-click="printBadge();$event.stopPropagation();">打印胸卡</md-button>
         <md-button class="md-raised" ng-click="printGuide();$event.stopPropagation();">打印导览图</md-button>
-      </section>
-      <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
-        <md-button class="md-fab" ng-click="countLogs()" aria-label="countLogs" tooltip="统计">
+      </div>
+      <div class="right" flex layout="row" layout-align="end center">
+        <md-button class="md-fab md-accent md-hue-1" ng-click="countLogs()" aria-label="countLogs">
           <i class="icon icon-stats"></i>
         </md-button>
-        <md-button class="md-fab" ng-click="startWorldCard()" aria-label="startWorldCard" tooltip="启动二维码识别">
+        <md-button class="md-fab md-accent md-hue-1" ng-click="startWorldCard()" aria-label="startWorldCard">
           <i class="icon icon-qrcode"></i>
         </md-button>
-        <md-button class="md-fab" ng-click="modifySetting()" aria-label="settings" tooltip="设置输入项">
+        <md-button class="md-fab md-accent md-hue-1" ng-click="modifySetting()" aria-label="settings">
           <i class="icon icon-cog"></i>
         </md-button>
-        <md-button class="md-fab" ng-click="clearAll()" aria-label="clearAll" tooltip="清空输入项">
+        <md-button class="md-fab md-accent md-hue-1" ng-click="clearAll()" aria-label="clearAll">
           <i class="icon icon-spinner-6"></i>
         </md-button>
-      </section>
-    </footer>
-  </div>
-  <div class="control-panel" id="rPanel" ng-if="$root.activePanel=='rPanel'" ng-controller="rPanelCtrl">
-    <div class="content">
+      </div>
+    </md-content>
+  </md-content>
+  <md-content flex layout="column" layout-fill class="control-panel" id="rPanel" ng-if="$root.activePanel=='rPanel'" ng-controller="rPanelCtrl">
+    <md-content flex class="panel-header" layout="row" layout-align="center center">
       <div class="form-inline">
         <div class="form-group">
           <input type="text" class="form-control" ng-model="keyWord">
@@ -112,82 +83,66 @@
         <button type="submit" class="btn btn-primary" ng-click="prevSearch()">前一个</button>
         <button type="submit" class="btn btn-primary" ng-click="nextSearch()">后一个</button>
       </div>
-      <form class="form-horizontal">
-        <div class="form-group">
-          <h2>
-            <small>展商信息：</small>
-          </h2>
-          <div class="col-sm-4 input-wrap" ng-repeat="item in input">
-            <div class="row">
-              <label class="col-sm-3 control-label">{{item.display}}</label>
-              <div class="col-sm-8">
-                <input class="form-control" ng-model="info[item.key]">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <h2>
-            <small>展会信息：</small>
-          </h2>
-          <div class="col-sm-4 input-wrap" ng-repeat="(key,val) in expoInfo">
-            <div class="row">
-              <label class="col-sm-3 control-label">{{key}}</label>
-              <div class="col-sm-8">
-                <input class="form-control" ng-model="expoInfo[key]" disabled>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <footer layout>
-      <section class="funcbar" layout="vertical" layout-sm="horizontal" layout-align="center center">
-        <md-button class="md-raised" ng-click="spImport()">导入</md-button>
-        <md-button class="md-raised" ng-click="spExport()">导出</md-button>
-      </section>
-      <section class="toolbar pull-right" layout="vertical" layout-sm="horizontal" layout-align="center center">
-        <md-button class="md-fab" ng-click="clearAll()" aria-label="clearAll" tooltip="清空输入项">
+    </md-content>
+    <md-content class="panel-section" flex md-scroll-y>
+      <h4 class="subtitle">
+        <small>展商信息：</small>
+      </h4>
+      <div class="input-wrap" layout="row" layout-wrap>
+        <md-input-container flex="33" ng-repeat="item in input">
+          <label>{{item.display}}</label>
+          <input ng-model="info[item.key]">
+        </md-input-container>
+      </div>
+      <h4 class="subtitle">
+        <small>展会信息：</small>
+      </h4>
+      <div class="input-wrap last" layout="row" layout-wrap>
+        <md-input-container flex="33" ng-repeat="(key,val) in expoInfo">
+          <label>{{key}}</label>
+          <input ng-model="expoInfo[key]" disabled>
+        </md-input-container>
+      </div>
+    </md-content>
+    <md-content class="panel-footer" flex layout="row">
+      <div class="left" flex layout="row" layout-align="start center">
+        <md-button class="md-raised" ng-click="spImport();$event.stopPropagation();">导入</md-button>
+        <md-button class="md-raised" ng-click="spExport();$event.stopPropagation();">导出</md-button>
+      </div>
+      <div class="right" flex layout="row" layout-align="end center">
+        <md-button class="md-fab md-accent md-hue-1" ng-click="clearAll()" aria-label="clearAll">
           <i class="icon icon-spinner-6"></i>
         </md-button>
-      </section>
-    </footer>
-  </div>
-  <div class="control-panel" id="sPanel" ng-show="$root.activePanel=='sPanel'" ng-controller="sPanelCtrl">
-    <div class="content">
-      <div class="tab-container" ng-init="active=0">
-        <ul class="nav nav-tabs">
-          <li ng-class="{active:active==0}" ng-click="active=0">
-            <a href="#">连接设置</a>
-          </li>
-          <li ng-class="{active:active==1}" ng-click="active=1">
-            <a href="#">展会设置</a>
-          </li>
-          <li ng-class="{active:active==2}" ng-click="active=2">
-            <a href="#">初始化设置</a>
-          </li>
-          <li ng-class="{active:active==3}" ng-click="active=3">
-            <a href="#">高级</a>
-          </li>
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane" ng-class="{active:active==0}">
-            <div id="connect-settings" ng-controller="connectSettingsCtrl" class="form-horizontal" ng-include src="'views/connectSettings.html'">
-            </div>
-          </div>
-          <div class="tab-pane" ng-class="{active:active==1}">
-            <div id="expo-settings" ng-controller="expoSettingsCtrl" class="form-horizontal" ng-include src="'views/expoSettings.html'"></div>
-          </div>
-          <div class="tab-pane" ng-class="{active:active==2}">
-            <div id="index-settings" ng-controller="indexSettingsCtrl" class="form-horizontal" ng-include src="'views/indexSettings.html'">
-            </div>
-          </div>
-          <div class="tab-pane" ng-class="{active:active==3}">
-            <div id="extra-settings" ng-controller="extraSettingsCtrl" class="form-horizontal" ng-include src="'views/extraSettings.html'">
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
+    </md-content>
+  </md-content>
+  <md-content flex layout="column" layout-fill class="control-panel" id="sPanel" ng-show="$root.activePanel=='sPanel'">
+    <md-tabs md-border-bottom flex>
+      <md-tab label="连接设置">
+        <md-content id="connect-settings" ng-controller="connectSettingsCtrl" ng-include src="'views/connect.settings.html'">
+        </md-content>
+      </md-tab>
+      <md-tab label="展会设置">
+        <md-content id="expo-settings" ng-controller="expoSettingsCtrl" ng-include src="'views/expo.settings.html'">
+        </md-content>
+      </md-tab>
+      <md-tab label="初始化设置">
+        <md-content id="index-settings" ng-controller="indexSettingsCtrl" ng-include src="'views/index.settings.html'">
+        </md-content>
+      </md-tab>
+      <md-tab label="高级">
+        <md-content id="extra-settings" ng-controller="extraSettingsCtrl" ng-include src="'views/extra.settings.html'">
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</md-content>
+<script type="text/ng-template" id="nameTpl.html">
+  <a tabindex="-1">
+    <span bind-html-unsafe="match.model.sur| typeaheadHighlight:query"></span>
+    <em>&nbsp;{{match.model.co}}
+      <span class="text-success" ng-if="match.model.reg_time">&nbsp;已登记</span>
+      <span class="text-danger" ng-if="!match.model.reg_time">&nbsp;未登记</span>
+    </em>
+  </a>
+</script>

@@ -13,4 +13,4 @@ gulp.task('watch', function() {
     gulp.watch('./bower_components/*', ['bower']);
 });
 
-gulp.task('default', ['bower', 'watch']);
+gulp.task('default', ['bower']);

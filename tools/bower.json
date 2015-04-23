@@ -20,6 +20,6 @@
     "bootstrap": "3.3.2",
     "icomoon": "0.0.3",
     "angular-bootstrap": "0.12.0",
-    "angular-material": "0.7.0-rc1-master-854fd0e"
+    "angular-material": "master"
   }
 }

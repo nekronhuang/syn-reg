@@ -1,0 +1,12 @@
+<md-content flex class="panel-header" layout="row" layout-align="start center">
+  <button class="btn btn-primary" ng-click="save()">
+    <i class="icon-disk"></i>&nbsp;保存</button>
+</md-content>
+<md-content class="panel-section" flex>
+  <div class="input-wrap last" layout="row" layout-wrap>
+    <md-input-container flex="40" ng-repeat="(key,val) in expoSettings">
+      <label>{{key}}</label>
+      <input type="text" ng-model="expoSettings[key]">
+    </md-input-container>
+  </div>
+</md-content>

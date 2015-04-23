@@ -1,8 +1,4 @@
-angular.module('controller.sPanel', ['service.basic', 'service.advanced']).controller('sPanelCtrl', function($scope) {
-    $scope.error = function() {
-        $scope.$broadcast('error');
-    };
-}).controller('connectSettingsCtrl', function($rootScope, $scope, $window, $http, Basic, Tools) {
+angular.module('controller.sPanel', ['service.basic', 'service.advanced']).controller('connectSettingsCtrl', function($rootScope, $scope, $window, $http, Basic, Tools) {
     $scope.spCheck = {
         text: '请点击...',
         visible: false,
@@ -34,7 +30,7 @@ angular.module('controller.sPanel', ['service.basic', 'service.advanced']).contr
             });
         }
     };
-    $scope.$on('disconnect',function(){
+    $scope.$on('disconnect', function() {
         $scope.disconnect();
     });
     $scope.build = function(item) {

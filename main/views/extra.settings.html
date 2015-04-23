@@ -1,0 +1,43 @@
+<md-content class="panel-section" flex md-scroll-y>
+  <h4 class="subtitle">
+    <small>DEBUG：</small>
+  </h4>
+  <div class="form-group dashed" layout="row" layout-wrap layout-align="start center">
+    <input flex="15" offset="15" type="text" class="form-control" placeholder="hex" ng-model="$parent.hex">
+    <div flex="15">
+      <button class="btn btn-primary" ng-click="debug()">
+        <i class="icon-key"></i> &nbsp;发送指令
+      </button>
+    </div>
+  </div>
+  </div>
+  <h4 class="subtitle">
+    <small>CONSOLE：</small>
+  </h4>
+  <div class="form-group dashed" layout="row" layout-wrap layout-align="start center">
+    <div flex="15" offset="15">
+      <button class="btn btn-primary" ng-click="showDev()">
+        <i class="icon-code"></i>&nbsp;OPEN</button>
+    </div>
+  </div>
+  <h4 class="subtitle">
+    <small>循环格式化: </small>
+  </h4>
+  <div class="form-group" layout="row" layout-wrap layout-align="start center">
+    <div flex="15" offset="15">
+      <md-switch ng-model="$root.onFormat">
+        {{ $root.onFormat }}
+      </md-switch>
+    </div>
+  </div>
+  <h4 class="subtitle">
+    <small>清空内容: </small>
+  </h4>
+  <div class="form-group dashed" layout="row" layout-wrap layout-align="start center">
+    <div flex="15" offset="15">
+      <button class="btn btn-danger" ng-click="clear()">
+        <i class="icon-remove"></i>&nbsp;CLEAR
+      </button>
+    </div>
+  </div>
+</md-content>

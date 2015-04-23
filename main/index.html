@@ -18,7 +18,7 @@
   <script src="./libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 </head>
 
-<body>
+<body layout="row">
   <div id="loading-wrap">
     <div class="content">
       <div class="outer-circle"></div>
@@ -31,9 +31,9 @@
   <div ng-cloak layout="row" layout-fill>
     <div id="side" flex layout-fill layout="column" ng-include src="'views/side.html'"></div>
     <div flex layout-fill layout="column">
-      <header class="navbar navbar-default" ng-controller="headerCtrl" ng-include src="'views/header.html'">
+      <header flex class="navbar navbar-default" ng-controller="headerCtrl" ng-include src="'views/header.html'">
       </header>
-      <section id="main" layout-fill ng-controller="mainCtrl" ng-include="'views/main.html'"></section>
+      <section flex id="main" layout ng-controller="mainCtrl" ng-include="'views/main.html'"></section>
     </div>
   </div>
   <!--main-->

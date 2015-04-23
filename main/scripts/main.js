@@ -4,7 +4,15 @@ process.on('uncaughtException', function(e) {
     console.error('uncaughtException:   ' + e);
 });
 
-angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 'ngMaterial', 'ui.bootstrap']).run(function($window, $rootScope, $timeout, $cacheFactory, $mdToast) {
+var app=angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 'ngMaterial', 'ui.bootstrap']);
+
+app.config(function($mdThemingProvider) {
+    $mdThemingProvider.theme('default').accentPalette('blue-grey',{
+        'hue-1':'50'
+    }).primaryPalette('blue');
+});
+
+app.run(function($window, $rootScope, $timeout, $cacheFactory, $mdToast) {
     $rootScope.showDialog = function(m) {
         $mdToast.show({
             template: '<md-toast>' + m + '</md-toast>',
@@ -13,9 +21,7 @@ angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 
         });
     };
     var myCache = $cacheFactory('myCache');
-    myCache.put('wPanel', angular.element('#wPanel'));
-    myCache.put('sPanel', angular.element('#sPanel'));
-    myCache.put('cPanel', angular.element('#cPanel'));
+
     $rootScope.sPort = null;
     $rootScope.onFormat = false;
     $rootScope.activePanel = 'sPanel';

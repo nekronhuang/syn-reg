@@ -34,7 +34,7 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
         var str = buf.toString('utf8', 2);
         doc.cardid = str.toUpperCase();
         Tools.showLog('写入完成...');
-        myCache.get('wPanel').scope().spAuth();
+        myCache.get('wPanel').spAuth();
         async.parallel([
             function(next) {
                 DB.logs.update({

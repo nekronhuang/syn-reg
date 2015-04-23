@@ -1,4 +1,5 @@
-angular.module('service.advanced', ['service.tools']).service('Advanced', function($rootScope, Tools, $timeout) {
+angular.module('service.advanced', ['service.tools']).service('Advanced', function($rootScope,$cacheFactory, Tools, $timeout) {
+    var myCache = $cacheFactory.get('myCache');
     this.g = function(hex) {
         Tools.communicateSP($rootScope.sPort, new Buffer(hex, 'hex'));
     };
@@ -33,7 +34,7 @@ angular.module('service.advanced', ['service.tools']).service('Advanced', functi
             }
         }
         if (range) {
-            var arr = angular.element('#wPanel').scope().info.auth,
+            var arr = myCache.get('wPanel').info.auth,
                 str = '',
                 temp = [],
                 target = new Buffer(1),

@@ -1,4 +1,5 @@
 angular.module('service.read', ['service.tools']).service('Read', function($rootScope, $cacheFactory, Tools) {
+    var myCache=$cacheFactory.get('myCache');
     this.g = function() {
         Tools.communicateSP($rootScope.sPort, new Buffer([0x32]));
     };
@@ -8,7 +9,8 @@ angular.module('service.read', ['service.tools']).service('Read', function($root
             Tools.showLog('读取完成,该卡为空!');
             return;
         }
-        angular.element('#wPanel').scope().render(data);
+        console.log(data);
+        myCache.get('wPanel').render(data);
         Tools.showLog('读取完成!');
     };
 });

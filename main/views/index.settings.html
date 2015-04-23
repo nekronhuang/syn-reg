@@ -1,11 +1,14 @@
-<div class="form-group">
-  <button class="btn btn-primary" ng-click="add()"> <i class="icon-plus"></i>
+<md-content flex class="panel-header" layout="row" layout-align="start center">
+  <button class="btn btn-primary" ng-click="add()">
+    <i class="icon-plus"></i>
   </button>
-  <button class="btn btn-primary" ng-click="save()"> <i class="icon-disk"></i>&nbsp;保存</button>
-  <button class="btn btn-primary" ng-click="init()"> <i class="icon-hammer"></i>&nbsp;flash初始化</button>
-</div>
-<div class="scroll" style="height: calc(100% - 60px);">
-  <div class="form-inline dash" ng-repeat="item in indexSettings track by $index">
+  <button class="btn btn-primary" ng-click="save()">
+    <i class="icon-disk"></i>&nbsp;保存</button>
+  <button class="btn btn-primary" ng-click="init()">
+    <i class="icon-hammer"></i>&nbsp;flash初始化</button>
+</md-content>
+<md-content class="panel-section" flex layout="column" layout-align="center center">
+  <div class="form-inline" ng-repeat="item in indexSettings track by $index">
     <div class="form-group">
       <label>功能:</label>
       <select class="form-control" ng-model="item.fn">
@@ -19,13 +22,16 @@
     </div>
     <div class="form-group">
       <label>开始:</label>
-      <input type="text" class="form-control" ng-model="item.start"></div>
+      <input type="text" class="form-control" ng-model="item.start">
+    </div>
     <div class="form-group">
       <label>结束:</label>
-      <input type="text" class="form-control" ng-model="item.end"></div>
+      <input type="text" class="form-control" ng-model="item.end">
+    </div>
     <div class="form-group">
       <label>加密初始化:</label>
-      <input type="checkbox" ng-model="item.aes.needInit"></div>
+      <input type="checkbox" ng-model="item.aes.needInit">
+    </div>
     <div class="form-group">
       <label>密钥:</label>
       <select class="form-control" ng-model="item.aes.type">
@@ -51,7 +57,8 @@
         <option value="0010">2</option>
       </select>
     </div>
-    <button type="button" class="btn btn-danger" ng-click="del($index)"> <i class="icon-minus"></i>
+    <button type="button" class="btn btn-danger" ng-click="del($index)">
+      <i class="icon-minus"></i>
     </button>
   </div>
-</div>
+</md-content>

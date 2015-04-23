@@ -1,0 +1,56 @@
+<md-content class="panel-section" flex md-scroll-y>
+  <h4 class="subtitle">
+    <small>机器连接：</small>
+  </h4>
+  <div class="form-group dashed" layout="row" layout-wrap layout-align="start center">
+
+    <label offset="15" flex="10" class="control-label">选择端口:</label>
+    <div flex="75" class="dropdown">
+      <button type="button" class="btn btn-default" ng-click="list($event)">
+        <span class="port-name">{{spCheck.text}}</span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" ng-class="{show:spCheck.visible}">
+        <li ng-repeat="item in spCheck.result">
+          <a href="###" ng-click="build(item)">{{item.display}}</a>
+        </li>
+      </ul>
+    </div>
+    <div flex="75" offset="25">
+      <button class="btn btn-primary" ng-click="disconnect()">断开连接</button>
+    </div>
+  </div>
+  <h4 class="subtitle">
+    <small>服务器连接：</small>
+  </h4>
+  <div class="form-group dashed" layout="row" layout-wrap layout-align="start center">
+    <label offset="15" flex="10" class="control-label">ip:</label>
+    <div flex="75">
+      <input class="form-control" ng-model="server.ip">
+    </div>
+    <label offset="15" flex="10" class="control-label">port:</label>
+    <div flex="75">
+      <input class="form-control" ng-model="server.port">
+    </div>
+    <div flex="75" offset="25">
+      <button class="btn btn-primary" ng-click="testLink();$event.stopPropagation();">{{computer?'电脑'+computer+'号':null}}测试连接</button>
+    </div>
+  </div>
+  <h4 class="subtitle">
+    <small>打印机连接：</small>
+  </h4>
+  <div class="form-group" layout="row" layout-wrap layout-align="start center">
+    <label offset="15" flex="10" class="control-label">条码打印机:</label>
+    <div flex="75">
+      <select class="form-control" ng-model="$parent.barcode" ng-options="item as item for item in printer"></select>
+    </div>
+    <label offset="15" flex="10" class="control-label">激光打印机:</label>
+    <div flex="75">
+      <select class="form-control" ng-model="$parent.laser" ng-options="item as item for item in printer"></select>
+    </div>
+    <div flex="75" offset="25">
+      <button class="btn btn-primary" ng-click="searchPrinter();$event.stopPropagation();">查找</button>
+      <button class="btn btn-primary" ng-click="setupPrinter();$event.stopPropagation();">保存打印机设置</button>
+    </div>
+  </div>
+</md-content>
