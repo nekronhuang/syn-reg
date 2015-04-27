@@ -17,7 +17,8 @@ angular.module('service.parser', []).service('Parser', function() {
                 if ((test + verify) == 0) {
                     totalLength = test;
                     if (start) {
-                        cache.copy(cache, 0, start, nowLength);
+                        cache.copy(cache, 0, start, start + nowLength);
+                        nowLength = nowLength - start;
                     }
                 } else {
                     clear();

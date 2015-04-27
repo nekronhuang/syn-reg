@@ -3,7 +3,6 @@ angular.module('app.directives', []).directive('dateFormat', function($filter) {
     return {
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
-
             function formatter(value) {
                 return dateFilter(value, 'yyyy-MM-dd HH:mm:ss');
             }
@@ -11,10 +10,8 @@ angular.module('app.directives', []).directive('dateFormat', function($filter) {
             function parser() {
                 return ctrl.$modelValue;
             }
-
             ctrl.$formatters.push(formatter);
             ctrl.$parsers.unshift(parser);
-
         }
     };
 });;

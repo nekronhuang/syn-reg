@@ -1,9 +1,8 @@
-angular.module('service.write', ['service.tools', 'service.db']).service('Write', function($rootScope, $window, $cacheFactory, $http, Tools, DB) {
+angular.module('service.write', ['service.tools', 'service.common']).service('Write', function($rootScope, $window, $cacheFactory, $http, Tools, Common) {
     var async = require('async'),
-        doc,
         myCache = $cacheFactory.get('myCache'),
-        self = this;
-    this.buffer = new Buffer(parseInt($window.localStorage.getItem('$infoSections')) * 48 + 1);
+        _buffer = new Buffer(parseInt($window.localStorage.getItem('$infoSections')) * 48 + 1),
+        doc;
     this.g = function(input, extra) {
         doc = angular.copy(input);
         if (!doc.cy) {
@@ -19,10 +18,10 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
             pos: input.pos || '',
             reg_type: extra.reg_type
         };
-        self.buffer.fill(0);
-        self.buffer[0] = 0x31;
-        self.buffer.write(angular.toJson(content), 1);
-        Tools.communicateSP($rootScope.sPort, self.buffer);
+        _buffer.fill(0);
+        _buffer[0] = 0x31;
+        _buffer.write(angular.toJson(content), 1);
+        Tools.communicateSP($rootScope.sPort, _buffer);
     };
     this.c = function() {
         if (!$window.localStorage.getItem('$index') || !$window.localStorage.getItem('$infoSections')) {
@@ -37,7 +36,7 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
         myCache.get('wPanel').spAuth();
         async.parallel([
             function(next) {
-                DB.logs.update({
+                Common.logs.update({
                     id: doc.id
                 }, {
                     $set: doc
@@ -47,14 +46,12 @@ angular.module('service.write', ['service.tools', 'service.db']).service('Write'
             },
             function(next) {
                 var link = $window.sessionStorage.getItem('$server') + '/update?computer=' + $window.localStorage.getItem('$computer');
-                $http.post(link, doc, {
-                    timeout: 1000
-                }).success(function() {
+                $http.post(link, doc).success(function() {
                     next();
                 }).error(next);
             }
         ], function(err) {
-            if (err) console.error(err);
+            if (err) throw err;
         });
     };
 });

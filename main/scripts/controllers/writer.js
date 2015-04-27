@@ -1,4 +1,4 @@
-angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.db']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope,$cacheFactory, $timeout, $filter, $http, $modal, Tools, Write, Read, writerInput, DB) {
+angular.module('controller.wPanel', ['service.write', 'service.read', 'service.tools', 'service.common']).controller('wPanelCtrl', function($window, $document, $rootScope, $scope, $cacheFactory, $timeout, $filter, $http, $modal, Tools, Write, Read, writerInput, Common) {
     var async = require('async'),
         myCache = $cacheFactory.get('myCache');
     myCache.put('wPanel', $scope);
@@ -23,7 +23,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             }
         }).error(function() {
             $rootScope.showDialog('网络异常,使用本地数据库!');
-            DB.local.findOne({
+            Common.local.findOne({
                 key: $scope.searchInput
             }, {
                 _id: 0
@@ -67,7 +67,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }
             }).error(function() {
                 $rootScope.showDialog('网络异常,使用本地数据库!');
-                DB.local.findOne({
+                Common.local.findOne({
                     id: val
                 }, {
                     _id: 0
@@ -550,7 +550,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
         var tomorrow = today + 1000 * 60 * 60 * 24;
         async.parallel({
             chinese: function(next) {
-                DB.logs.count({
+                Common.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
@@ -561,7 +561,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }, next);
             },
             web: function(next) {
-                DB.logs.count({
+                Common.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
@@ -570,7 +570,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }, next);
             },
             wechat: function(next) {
-                DB.logs.count({
+                Common.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
@@ -579,7 +579,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }, next);
             },
             group: function(next) {
-                DB.logs.count({
+                Common.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
@@ -588,7 +588,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }, next);
             },
             sms: function(next) {
-                DB.logs.count({
+                Common.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
@@ -597,7 +597,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }, next);
             },
             conf: function(next) {
-                DB.logs.count({
+                Common.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
@@ -606,7 +606,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }, next);
             },
             total: function(next) {
-                DB.logs.count({
+                Common.logs.count({
                     reg_time: {
                         $gte: today,
                         $lte: tomorrow
@@ -614,7 +614,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
                 }, next);
             },
         }, function(err, res) {
-            if (err) console.error(err);
+            if (err) throw err;
             var modalInstance = $modal.open({
                 templateUrl: './views/todayStat.html',
                 windowClass: 'remodal-like',
@@ -668,7 +668,7 @@ angular.module('controller.wPanel', ['service.write', 'service.read', 'service.t
             $scope.info = output;
             $scope.$digest();
         } catch (e) {
-            console.error('not json');
+            console.error('parse error', data);
         }
     };
 

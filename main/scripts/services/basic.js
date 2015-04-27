@@ -117,10 +117,11 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
             }
         });
         if ($rootScope.sPort) {
-            $rootScope.sPort.removeAllListeners();
+            // $rootScope.sPort.removeAllListeners();
             $rootScope.sPort.on('data', function(buf) {
                 var data = buf.toString('hex'),
                     status = data.substring(0, 4);
+                console.debug('>>>>>buffer:', data);
                 if (status.substring(2, 4) == '62') {
                     Tools.showLog('通讯开始，请勿断开连接...');
                 }
@@ -132,7 +133,6 @@ angular.module('service.basic', ['service.write', 'service.read', 'service.tools
                     }
                     return;
                 }
-                //console.debug('>>>>>buffer:', data);
                 switch (status) {
                     case '3163':
                         Write.c();

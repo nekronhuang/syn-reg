@@ -1,4 +1,4 @@
-angular.module('service.db', []).service('DB', function($rootScope) {
+angular.module('service.common', []).service('Common', function($rootScope) {
     var nedb = require('nedb');
     this.logs = new nedb({
         filename: './AppData/logs.db',

@@ -1,18 +1,17 @@
 var gui = require('nw.gui');
 
 process.on('uncaughtException', function(e) {
-    console.error('uncaughtException:   ' + e);
+    var fs = require('fs');
+    fs.appendFile('./error.log', JSON.stringify(e) + '\r\n');
 });
 
-var app=angular.module('syn-reg', ['app.controllers', 'app.services', 'app.directives', 'ngMaterial', 'ui.bootstrap']);
+var app = angular.module('syn-reg', ['app.controllers', 'app.directives', 'ngMaterial', 'ui.bootstrap']);
 
 app.config(function($mdThemingProvider) {
-    $mdThemingProvider.theme('default').accentPalette('blue-grey',{
-        'hue-1':'50'
+    $mdThemingProvider.theme('default').accentPalette('blue-grey', {
+        'hue-1': '50'
     }).primaryPalette('blue');
-});
-
-app.run(function($window, $rootScope, $timeout, $cacheFactory, $mdToast) {
+}).run(function($window, $rootScope, $timeout, $cacheFactory, $mdToast) {
     $rootScope.showDialog = function(m) {
         $mdToast.show({
             template: '<md-toast>' + m + '</md-toast>',
@@ -27,7 +26,7 @@ app.run(function($window, $rootScope, $timeout, $cacheFactory, $mdToast) {
     $rootScope.activePanel = 'sPanel';
     var win = gui.Window.get();
     win.show();
-    $rootScope.$on('ready',function(){
+    $rootScope.$on('ready', function() {
         $timeout(function() {
             angular.element('#loading-wrap').addClass('loaded');
         }, 1000);
@@ -58,5 +57,3 @@ app.run(function($window, $rootScope, $timeout, $cacheFactory, $mdToast) {
 });;
 
 angular.module('app.controllers', ['controller.wPanel', 'controller.rPanel', 'controller.sPanel', 'controller.cPanel']);
-
-angular.module('app.services', ['service.write', 'service.read', 'service.export', 'service.import', 'service.format', 'service.advanced', 'service.basic','service.parser']);

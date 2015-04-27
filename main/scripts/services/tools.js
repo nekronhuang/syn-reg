@@ -6,15 +6,14 @@ angular.module('service.tools', []).service('Tools', function($window, $rootScop
             msg: msg
         });
     };
-    this.communicateSP = function(port, value, callback) {
+    this.communicateSP = function(port, value) {
         if (port) {
             var x = value.length,
                 y = -x,
                 v = Buffer.concat([new Buffer([0x23, x >> 8, x, y >>> 0 >> 8, y >>> 0]), value, new Buffer([0x25])]);
             //console.debug('communicate:', v.toString('hex'));
             port.write(v, function(err) {
-                if (err) return console.error('write', err);
-                if (callback) callback();
+                if (err) throw err;
             });
         } else {
             $rootScope.showDialog('未连接!');
@@ -48,25 +47,25 @@ angular.module('service.tools', []).service('Tools', function($window, $rootScop
         return myCache.get('indexInit');
     };
     var fork = require('child_process').fork,
-        rc = fork(path.dirname(process.execPath) + '/main/scripts/workers/rc.js'),
-        barcode = fork(path.dirname(process.execPath) + '/main/scripts/workers/barcode.js'),
-        laser = fork(path.dirname(process.execPath) + '/main/scripts/workers/laser.js');
-    barcode.on('message', function(msg) {
-        $rootScope.$broadcast('fork', msg);
-    });
+        // barcode = fork(path.dirname(process.execPath) + '/main/scripts/workers/barcode.js'),
+        // laser = fork(path.dirname(process.execPath) + '/main/scripts/workers/laser.js'),
+        rc = fork(path.dirname(process.execPath) + '/main/scripts/workers/rc.js');
+    // barcode.on('message', function(msg) {
+    //     $rootScope.$broadcast('fork', msg);
+    // });
+    // this.communicateBarcode = function(para) {
+    //     barcode.send(para);
+    // };
+    // laser.on('message', function(msg) {
+    //     console.log(msg);
+    // });
+    // this.communicateLaser = function(para) {
+    //     laser.send(para);
+    // };
     rc.on('message', function(msg) {
         $rootScope.$broadcast('rc', msg);
     });
-    laser.on('message', function(msg) {
-        console.log(msg);
-    });
     this.communicateRC = function(para) {
         rc.send(para);
-    };
-    this.communicateBarcode = function(para) {
-        barcode.send(para);
-    };
-    this.communicateLaser = function(para) {
-        laser.send(para);
     };
 });
